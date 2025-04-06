@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./Typing.css";
+import { Chart } from 'chart.js/auto';
 
 const TypingArea = () => {
   // Array of predefined paragraphs
@@ -59,6 +60,13 @@ const TypingArea = () => {
   const [totalChars, setTotalChars] = useState(0);
   const [selectedOptions, setSelectedOptions] = useState([]);
 
+  const [showResults, setShowResults] = useState(false);
+  const [wpmHistory, setWpmHistory] = useState([]);
+  const [accuracyHistory, setAccuracyHistory] = useState([]);
+  const [testHistory, setTestHistory] = useState([]);
+  const chartRef = useRef(null);
+  const chartInstance = useRef(null);
+
   useEffect(() => {
     const randomParagraph =
       wordsPunctuationNumberList[
@@ -71,11 +79,17 @@ const TypingArea = () => {
     let interval;
     if (timerActive && time < selectedTime) {
       interval = setInterval(() => {
-        setTime((prevTime) => prevTime + 1);
+        setTime((prevTime) => {
+          const newTime = prevTime + 1;
+          
+          // Only update stats (and history) every second
+          calculateStats();
+          return newTime;
+        });
       }, 1000);
     } else if (time >= selectedTime) {
       clearInterval(interval);
-      setTimeUp(true); 
+      setTimeUp(true);
     }
     return () => clearInterval(interval);
   }, [timerActive, time, selectedTime]);
@@ -87,6 +101,23 @@ const TypingArea = () => {
     }
   }, [time]);
 
+  // const calculateStats = () => {
+  //   const typedWords = typedText.trim().split(/\s+/).length;
+  //   const wpmValue = Math.floor(typedWords / (time / 60));
+  
+  //   let correctCount = 0;
+  //   for (let i = 0; i < Math.min(typedText.length, text.length); i++) {
+  //     if (typedText[i] === text[i]) {
+  //       correctCount++;
+  //     }
+  //   }
+  
+  //   const accuracyValue = Math.floor((correctCount / typedText.length) * 100);
+  
+  //   setWpm(wpmValue);
+  //   setAccuracy(accuracyValue);
+  // };
+  
   const calculateStats = () => {
     const typedWords = typedText.trim().split(/\s+/).length;
     const wpmValue = Math.floor(typedWords / (time / 60));
@@ -98,18 +129,251 @@ const TypingArea = () => {
       }
     }
   
-    const accuracyValue = Math.floor((correctCount / typedText.length) * 100);
+    const accuracyValue = typedText.length > 0 
+      ? Math.floor((correctCount / typedText.length) * 100)
+      : 0;
   
     setWpm(wpmValue);
     setAccuracy(accuracyValue);
+  
+    // ✅ Only update history if time is still running
+    if (timerActive && time < selectedTime) {
+      setWpmHistory(prev => 
+        prev.length < selectedTime 
+          ? [...prev, wpmValue] 
+          : [...prev.slice(1), wpmValue] // Remove oldest entry if exceeding
+      );
+      setAccuracyHistory(prev => 
+        prev.length < selectedTime 
+          ? [...prev, accuracyValue] 
+          : [...prev.slice(1), accuracyValue]
+      );
+    }
   };
   
+  
+  useEffect(() => {
+    if (time === selectedTime) {
+      setTimerActive(false);
+      calculateStats();
+      setShowResults(true);
+      
+      // Save test results to history
+      setTestHistory(prev => {
+        const newHistory = [
+          ...prev,
+          {
+            wpm,
+            accuracy,
+            correctChars,
+            totalChars,
+            time: selectedTime,
+            date: new Date().toISOString()
+          }
+        ];
+        return newHistory.slice(-3); // Only keep last 3 items
+      });
+    }
+  }, [time]);
+
+  
+  // Update your chart configuration in the useEffect where you create the chart
+useEffect(() => {
+  if (showResults && chartRef.current) {
+    if (chartInstance.current) {
+      chartInstance.current.destroy();
+    }
+    const paddedWpmHistory = 
+      wpmHistory.length < selectedTime
+        ? [...wpmHistory, ...Array(selectedTime - wpmHistory.length).fill(wpmHistory[wpmHistory.length - 1] || 0)]
+        : wpmHistory.slice(0, selectedTime);
+
+    const paddedAccuracyHistory = 
+      accuracyHistory.length < selectedTime
+        ? [...accuracyHistory, ...Array(selectedTime - accuracyHistory.length).fill(accuracyHistory[accuracyHistory.length - 1] || 100)]
+        : accuracyHistory.slice(0, selectedTime);
+
+    const ctx = chartRef.current.getContext('2d');
+    chartInstance.current = new Chart(ctx, {
+      
+      type: 'line',
+      data: {
+        // labels: Array.from({length: wpmHistory.length}, (_, i) => i + 1),
+        // labels : wpmHistory.map((_, index) => index + 1), // 1, 2, 3, ..., up to selectedTime
+        labels: Array.from({ length: selectedTime }, (_, i) => i + 1), // 1, 2, ..., selectedTime
+
+        datasets: [
+          {
+            label: 'WPM',
+            data: paddedWpmHistory,
+            borderColor: 'rgb(75, 192, 192)',
+            backgroundColor: 'rgba(75, 192, 192, 0.1)',
+            borderWidth: 2,
+            tension: 0.3,
+            yAxisID: 'y',
+            pointRadius: 2, // Smaller points
+            pointHoverRadius: 4,
+            pointBackgroundColor: 'rgb(75, 192, 192)',
+          },
+          {
+            label: 'Accuracy %',
+            data: paddedAccuracyHistory,
+            borderColor: 'rgb(255, 99, 132)',
+            backgroundColor: 'rgba(255, 99, 132, 0.1)',
+            borderWidth: 2,
+            tension: 0.3,
+            yAxisID: 'y1',
+            pointRadius: 2,
+            pointHoverRadius: 4,
+            pointBackgroundColor: 'rgb(255, 99, 132)',
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          mode: 'index',
+          intersect: false,
+        },
+        plugins: {
+          legend: {
+            position: 'top',
+            labels: {
+              boxWidth: 12,
+              padding: 20,
+              font: {
+                size: 14
+              }
+            }
+          },
+          tooltip: {
+            backgroundColor: 'rgba(0,0,0,0.8)',
+            titleFont: {
+              size: 14
+            },
+            bodyFont: {
+              size: 12
+            },
+            padding: 10
+          }
+        },
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'Time (in seconds)',
+            },
+            ticks: {
+              color: '#666',
+              font: {
+                size: 12
+              },
+
+             stepSize: 1,
+             callback: (val) => val, 
+            },
+            title: {
+              display: true,
+              text: 'Time (seconds)',
+              color: '#666',
+              font: {
+                size: 14,
+                weight: 'bold'
+              }
+            }
+          },
+          y: {
+            beginAtZero: true,
+            type: 'linear',
+            display: true,
+            position: 'left',
+            grid: {
+              color: 'rgba(0,0,0,0.05)'
+            },
+            ticks: {
+              color: '#666',
+              font: {
+                size: 12
+              }
+            },
+            title: {
+              display: true,
+              text: 'WPM',
+              color: '#666',
+              font: {
+                size: 14,
+                weight: 'bold'
+              }
+            }
+          },
+          y1: {
+            type: 'linear',
+            display: true,
+            position: 'right',
+            min: 0,
+            max: 100,
+            grid: {
+              drawOnChartArea: false,
+            },
+            ticks: {
+              color: '#666',
+              font: {
+                size: 12
+              }
+            },
+            title: {
+              display: true,
+              text: 'Accuracy %',
+              color: '#666',
+              font: {
+                size: 14,
+                weight: 'bold'
+              }
+            },
+          }
+        }
+      }
+    });
+  }
+}, [showResults, wpmHistory, accuracyHistory, selectedTime]);
+
+  // Add a reset function
+  const resetTest = () => {
+    setTime(0);
+    setTypedText("");
+    setStarted(false);
+    setTimerActive(false);
+    setTimeUp(false);
+    setWpm(0);
+    setAccuracy(100);
+    setCorrectChars(0);
+    setTotalChars(0);
+    setWpmHistory([]);
+    setAccuracyHistory([]);
+    setShowResults(false);
+    
+    // Get new random text
+    setText(getFilteredParagraphs());
+  };
+
+  const calculateConsistency = () => {
+    if (wpmHistory.length < 2) return 100;
+    
+    const avg = wpmHistory.reduce((a, b) => a + b, 0) / wpmHistory.length;
+    const variance = wpmHistory.reduce((a, b) => a + Math.pow(b - avg, 2), 0) / wpmHistory.length;
+    const stdDev = Math.sqrt(variance);
+    
+    return Math.max(0, 100 - Math.floor((stdDev / avg) * 100));
+  };
 
   const handleKeyDown = (e) => {
     if (timeUp) return;
     if (!started) {
       setStarted(true);
       setTimerActive(true);
+      setWpmHistory([0]);
+    setAccuracyHistory([100]);
     }
   
     const { key } = e;
@@ -259,7 +523,7 @@ const TypingArea = () => {
           </div>
         </div>
       </div>
-
+      {!showResults ? (
       <div className="typing-container" tabIndex={0} onKeyDown={handleKeyDown}>
         <div className="text">
           {(Array.isArray(text) ? text : text.split("")).map((char, index) => {
@@ -285,6 +549,56 @@ const TypingArea = () => {
           )}
         </div>
       </div>
+       ) : (
+        <div className="results-container">
+          <h2>Test Results</h2>
+          
+          <div className="summary-stats">
+            <div className="stat-box">
+              <div className="stat-value">{wpm}</div>
+              <div className="stat-label">WPM</div>
+            </div>
+            <div className="stat-box">
+              <div className="stat-value">{accuracy}%</div>
+              <div className="stat-label">Accuracy</div>
+            </div>
+            <div className="stat-box">
+              <div className="stat-value">{correctChars}/{totalChars}</div>
+              <div className="stat-label">Chars</div>
+            </div>
+            <div className="stat-box">
+              <div className="stat-value">{selectedTime}s</div>
+              <div className="stat-label">Time</div>
+            </div>
+          </div>
+          
+          <div className="graph-container">
+            <canvas ref={chartRef}></canvas>
+          </div>
+          
+          <div className="detailed-stats">
+            <div>
+              <h3>Raw WPM: {Math.floor((typedText.trim().split(/\s+/).length * 60) / selectedTime)}</h3>
+              <h3>Consistency: {calculateConsistency()}%</h3>
+            </div>
+            
+            <div className="test-history">
+              <h3>Recent Tests</h3>
+              {testHistory.slice().reverse().map((test, index) => (
+                <div key={index} className="history-item">
+                  <span>{test.wpm} wpm</span>
+                  <span>{test.accuracy}%</span>
+                  <span>{test.time}s</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          <button onClick={resetTest} className="restart-button">
+            Try Again
+          </button>
+        </div>
+      )}
     </div>
   );
 };
