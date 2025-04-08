@@ -47,6 +47,8 @@ const TypingArea = () => {
     "The test started promptly at 9:00 AM, and we were given 2 hours to complete it. The exam consisted of 50 multiple-choice questions, 10 short-answer questions, and 3 essay questions. I decided to start with the multiple-choice section, finishing it in 30 minutes. By 10:30 AM, I had completed all the short-answer questions and moved on to the essays. I spent the remaining time carefully crafting my responses, ensuring I answered everything thoroughly. At 11:55 AM, I submitted my paper, feeling confident that I had done my best and was ready to relax after such an intense test.",
   ];
 
+  const [isBlurred, setIsBlurred] = useState(true); 
+  const [showButton, setShowButton] = useState(true); 
   const [text, setText] = useState("");
   const [typedText, setTypedText] = useState("");
   const [started, setStarted] = useState(false); 
@@ -68,10 +70,36 @@ const TypingArea = () => {
   const chartInstance = useRef(null);
 
   useEffect(() => {
+
+    const typingContainer = document.querySelector('.typing-container');
+    if (isBlurred) {
+      typingContainer.classList.add('blurred');
+    } else {
+      typingContainer.classList.remove('blurred');
+    }
+
+
+    setShowButton(isBlurred);
+
+  }, [isBlurred]);
+
+
+  
+  const handleFocusClick = () => {
+    setIsBlurred(false);
+  };
+
+  useEffect(() => {
+    // const container = document.querySelector('.container');
+    // container.classList.add('blurred');
+
     const randomParagraph =
       wordsPunctuationNumberList[
         Math.floor(Math.random() * wordsPunctuationNumberList.length)
       ];
+      // setTimeout(() => {
+      //   container.classList.remove('blurred');
+      // }, 1500); 
     setText(randomParagraph);
   }, []);
 
@@ -479,7 +507,13 @@ useEffect(() => {
   };
 
   return (
-    <div className="container">
+    <div className="container"> 
+
+    {showButton && (
+        <button onClick={handleFocusClick} className="focus-button">
+           Click here to focus
+        </button>
+      )}
       <div className="header">
         <h1 className="mt-4">Typing Test</h1>
         <div className="stats">

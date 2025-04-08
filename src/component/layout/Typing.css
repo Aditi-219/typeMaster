@@ -30,6 +30,37 @@
     letter-spacing: 0.5px;  
     transition: filter 0.3s ease;  
   }
+
+  .typing-container.blurred {
+    filter: blur(10px); 
+    pointer-events: none; 
+    transition: filter 2s ease-out; 
+  }
+
+   .blurred.container {
+     opacity: 0.5;
+  } 
+
+  .focus-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 15px 25px;
+    font-size: 16px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    z-index: 10;
+    opacity : 1;
+    transition: opacity 0.3s;
+  }
+  
+  .focus-button:hover {
+    background-color: rgba(0, 0, 0, 0.9);
+  }
   
   .text.blur {
     filter: blur(6px);  
