@@ -181,6 +181,45 @@
     padding-left: 3%;
     padding-right: 3%;
   }
+  .login-container {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 10;
+  }
+  
+  .login-button {
+    position: relative; 
+  padding: 15px 25px;
+  font-size: 16px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  z-index: 10;
+  opacity: 1;
+  transition: opacity 0.3s, background-color 0.3s;
+  white-space: nowrap;
+
+  }
+  
+  .login-button:hover {
+    background-color: rgba(0, 0, 0, 0.9);
+  }
+  
+  .login-popup {
+    background: white;
+    border: 1px solid #ccc;
+    padding: 15px 25px;
+    position: absolute;
+    top: 60px;
+    right: 20px;
+    z-index: 20;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    border-radius: 6px;
+  }
+  
 
   /* Results Display Styles */
 .results-container {
@@ -281,7 +320,9 @@
   min-height: 100vh;
   padding: 20px;
   color: white;
+  position: relative;
 }
+  
 .results-container {
   background: #303131;
   padding: 20px;

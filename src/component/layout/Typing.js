@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./Typing.css";
 import { Chart } from 'chart.js/auto';
+import { getAuth, provider, signInWithPopup,createUserWithEmailAndPassword, signInWithEmailAndPassword } from './firebase';
+
+
 
 const TypingArea = () => {
   // Array of predefined paragraphs
@@ -46,6 +49,74 @@ const TypingArea = () => {
     "On the road trip, we planned to drive 500 kilometers over the course of 10 hours, making stops along the way to stretch and grab food. We made our first stop after 2 hours to stretch our legs and grab some coffee. By 3:00 PM, we had already covered 150 kilometers and were halfway through our journey. The scenery was breathtaking, with mountains on one side and forests on the other. After 6 hours of driving, we stopped for lunch at a small town diner, refueled, and got back on the road. By 7:30 PM, we arrived at our destination, exhausted but happy after a successful road trip, ready to relax after the long drive.",
     "The test started promptly at 9:00 AM, and we were given 2 hours to complete it. The exam consisted of 50 multiple-choice questions, 10 short-answer questions, and 3 essay questions. I decided to start with the multiple-choice section, finishing it in 30 minutes. By 10:30 AM, I had completed all the short-answer questions and moved on to the essays. I spent the remaining time carefully crafting my responses, ensuring I answered everything thoroughly. At 11:55 AM, I submitted my paper, feeling confident that I had done my best and was ready to relax after such an intense test.",
   ];
+
+  // const [isLoggedIn, setIsLoggedIn] = useState(false);
+  // const [user, setUser] = useState(null);
+  // const [showLogin, setShowLogin] = useState(false);
+
+  const handleLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      setUser(user);
+      setIsLoggedIn(true);
+      setShowLogin(false);
+      setIsBlurred(false);
+      console.log("Logged in as:", user.displayName || user.email);
+    } catch (error) {
+      console.error("Login failed:", error);
+    }
+  };
+
+  const [showLogin, setShowLogin] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [user, setUser] = useState(null);
+  const [showSignup, setShowSignup] = useState(false);
+
+  const auth = getAuth();
+
+  const handleEmailSignup = async (e) => {
+    e.preventDefault();
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      setUser(userCredential.user);
+      setIsLoggedIn(true);
+      setShowLogin(false); // Close the login popup
+      setShowSignup(false); // Close the signup form
+    } catch (error) {
+      console.error("Error signing up with email and password", error);
+      alert(error.message); // Display error to the user
+    }
+  };
+
+  const handleEmailLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      setUser(userCredential.user);
+      setIsLoggedIn(true);
+      setShowLogin(false); // Close the login popup
+    } catch (error) {
+      console.error("Error signing in with email and password", error);
+      alert(error.message); // Display error to the user
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await auth.signOut();
+      setIsLoggedIn(false);
+      setUser(null);
+    } catch (error) {
+      console.error("Error signing out", error);
+    }
+  };
+
+  
+  
+
 
   const [isBlurred, setIsBlurred] = useState(true); 
   const [showButton, setShowButton] = useState(true); 
@@ -507,7 +578,67 @@ useEffect(() => {
   };
 
   return (
-    <div className="container"> 
+    <div className="container">
+      <div className="login-container">
+      {showButton && !isLoggedIn && ( 
+    <button onClick={() => setShowLogin(true)} className="focus-button">
+      🔐Login
+    </button>
+  )}
+  
+  {showLogin && !isLoggedIn && (
+    <div className="login-popup">
+      <form onSubmit={handleEmailLogin}>
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <button type="submit">Login with Email</button>
+          </form>
+           <button onClick={() => setShowSignup(true)}>
+              Don't have an account? Sign up
+            </button>
+      {/* <h3>Login to Play</h3> */}
+      <button onClick={handleLogin}>Login with Google</button>
+    </div>
+  )}
+  {showSignup && (
+        <div className="login-popup">
+          <form onSubmit={handleEmailSignup}>
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <button type="submit">Sign up with Email</button>
+          </form>
+        </div>
+      )}
+  
+  {isLoggedIn && user && (
+    <div className="user-info">
+      <p>Welcome, {user.displayName || user.email}!</p>
+      <button onClick={() => auth.signOut().then(() => setIsLoggedIn(false))}>
+        Logout
+      </button>
+    </div>
+  )}  </div>
+     
 
     {showButton && (
         <button onClick={handleFocusClick} className="focus-button">
