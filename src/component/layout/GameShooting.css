@@ -1,0 +1,84 @@
+.falling-words {
+    position: relative;
+    height: 400px;
+    overflow: hidden;
+  }
+  
+  .alien-container {
+    position: absolute;
+    top: 0;
+    left: calc(10% + 80% * var(--rand));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: fall 10s linear forwards;
+  }
+  
+  .alien-word {
+    background-color: black;
+    color: lime;
+    padding: 4px 8px;
+    border-radius: 5px;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  .alien-body {
+    font-size: 2rem;
+  }
+  
+  
+  @keyframes fall {
+    0% {
+      transform: translateY(0px);
+    }
+    100% {
+      transform: translateY(100vh);
+    }
+  }
+  
+  
+  @keyframes zigzag {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-20px); }
+    50% { transform: translateX(20px); }
+    75% { transform: translateX(-10px); }
+    100% { transform: translateX(0); }
+  }
+  
+  
+  @keyframes drift {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(40px); }
+  }
+  
+  
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(10deg); }
+  }
+  
+  
+  .motion-0 .alien-body {
+    animation: zigzag 2s infinite;
+  }
+  
+  .motion-1 .alien-body {
+    animation: drift 5s linear infinite;
+  }
+  
+  .motion-2 .alien-body {
+    animation: wiggle 1s ease-in-out infinite;
+  }
+
+  .shooting-game {
+    background-image: url('https://i.fbcd.co/products/resized/resized-750-500/comp-182-kopya-9a5f892728dd2330187f206ec23d48b631ead7dad1559cfa9d8b2daa990b7035.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+    color: white;
+  }
+  

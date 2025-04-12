@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import "./Typing.css";
 import { Chart } from 'chart.js/auto';
 import { getAuth, provider, signInWithPopup,createUserWithEmailAndPassword, signInWithEmailAndPassword,onAuthStateChanged  } from './firebase';
+import { Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
 
 
@@ -104,6 +106,7 @@ const TypingArea = () => {
     }
   };
 
+ 
   const handleLogout = async () => {
     try {
       await auth.signOut();
@@ -127,12 +130,10 @@ const TypingArea = () => {
     return () => unsubscribe(); 
   }, []);
 
-  
-  
-
-
+  const [showAuthButton, setShowAuthButton] = useState(true);
+  const [showFocusButton, setShowFocusButton] = useState(true);
   const [isBlurred, setIsBlurred] = useState(true); 
-  const [showButton, setShowButton] = useState(true); 
+  // const [showButton, setShowButton] = useState(true); 
   const [text, setText] = useState("");
   const [typedText, setTypedText] = useState("");
   const [started, setStarted] = useState(false);
@@ -158,6 +159,7 @@ const TypingArea = () => {
     const typingContainer = typingContainerRef.current;
     if (isBlurred) {
       typingContainer?.classList.add("blurred");
+      setShowFocusButton(true);
     } else {
       typingContainer?.classList.remove("blurred");
       // Auto-focus when unblurred
@@ -165,11 +167,12 @@ const TypingArea = () => {
         typingContainer?.focus();
       }, 50);
     }
-    setShowButton(isBlurred);
+    // setShowFocusButton(isBlurred);
   }, [isBlurred]);
   
   const handleFocusClick = () => {
     setIsBlurred(false);
+    setShowFocusButton(false);
     setTimeout(() => {
       typingContainerRef.current?.focus();
     }, 50);
@@ -181,6 +184,7 @@ const TypingArea = () => {
       wordsPunctuationNumberList[
         Math.floor(Math.random() * wordsPunctuationNumberList.length)
       ];
+      
     // setTimeout(() => {
     //   container.classList.remove('blurred');
     // }, 1500);
@@ -603,12 +607,12 @@ const TypingArea = () => {
   return (
     <div className="container">
       <div className="auth-container">
-        {showButton && !isLoggedIn && (
+        {showAuthButton && !isLoggedIn && (
           <button
             onClick={() => setShowLogin(true)}
             className="auth-button primary"
           >
-            🔐 Login / Sign Up
+            🔐 Login / Sign Up to play!
           </button>
         )}
 
@@ -711,6 +715,12 @@ const TypingArea = () => {
                 <strong>{user.displayName || user.email.split("@")[0]}</strong>
               </h5>
             </div>
+            {isLoggedIn && (
+              <Link to="/game" className="play-button">
+               🎮 Play Typing Shooter
+              </Link>
+            )}
+
             <button
               onClick={() => auth.signOut().then(() => setIsLoggedIn(false))}
               className="auth-button logout"
@@ -720,7 +730,7 @@ const TypingArea = () => {
           </div>
         )}
       </div>
-      {showButton && (
+      {showFocusButton && (
         <button onClick={handleFocusClick} className="focus-button">
           Click here to focus
         </button>
