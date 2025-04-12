@@ -1,9 +1,20 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./Typing.css";
+<<<<<<< HEAD
 import { Chart } from 'chart.js/auto';
 import { getAuth, provider, signInWithPopup,createUserWithEmailAndPassword, signInWithEmailAndPassword,onAuthStateChanged  } from './firebase';
 
 
+=======
+import { Chart } from "chart.js/auto";
+import {
+  getAuth,
+  provider,
+  signInWithPopup,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "./firebase";
+>>>>>>> 825c9e444cdc6317e7a2c347c2c16f0504c266d0
 
 const TypingArea = () => {
   // Array of predefined paragraphs
@@ -70,8 +81,13 @@ const TypingArea = () => {
 
   const [showLogin, setShowLogin] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+<<<<<<< HEAD
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+=======
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+>>>>>>> 825c9e444cdc6317e7a2c347c2c16f0504c266d0
   const [user, setUser] = useState(null);
   const [showSignup, setShowSignup] = useState(false);
 
@@ -80,7 +96,15 @@ const TypingArea = () => {
   const handleEmailSignup = async (e) => {
     e.preventDefault();
     try {
+<<<<<<< HEAD
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+=======
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+>>>>>>> 825c9e444cdc6317e7a2c347c2c16f0504c266d0
       setUser(userCredential.user);
       setIsLoggedIn(true);
       setShowLogin(false); // Close the login popup
@@ -94,7 +118,15 @@ const TypingArea = () => {
   const handleEmailLogin = async (e) => {
     e.preventDefault();
     try {
+<<<<<<< HEAD
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
+=======
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+>>>>>>> 825c9e444cdc6317e7a2c347c2c16f0504c266d0
       setUser(userCredential.user);
       setIsLoggedIn(true);
       setShowLogin(false); // Close the login popup
@@ -114,6 +146,7 @@ const TypingArea = () => {
     }
   };
 
+<<<<<<< HEAD
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -133,9 +166,13 @@ const TypingArea = () => {
 
   const [isBlurred, setIsBlurred] = useState(true); 
   const [showButton, setShowButton] = useState(true); 
+=======
+  const [isBlurred, setIsBlurred] = useState(true);
+  const [showButton, setShowButton] = useState(true);
+>>>>>>> 825c9e444cdc6317e7a2c347c2c16f0504c266d0
   const [text, setText] = useState("");
   const [typedText, setTypedText] = useState("");
-  const [started, setStarted] = useState(false); 
+  const [started, setStarted] = useState(false);
   const [time, setTime] = useState(0);
   const [timerActive, setTimerActive] = useState(false);
   const [selectedTime, setSelectedTime] = useState(15);
@@ -152,8 +189,10 @@ const TypingArea = () => {
   const [testHistory, setTestHistory] = useState([]);
   const chartRef = useRef(null);
   const chartInstance = useRef(null);
+  const typingContainerRef = useRef(null);
 
   useEffect(() => {
+<<<<<<< HEAD
 
     const typingContainer = document.querySelector('.typing-container');
     if (isBlurred) {
@@ -176,14 +215,43 @@ const TypingArea = () => {
   useEffect(() => {
     // const container = document.querySelector('.container');
     // container.classList.add('blurred');
+=======
+    const typingContainer = typingContainerRef.current;
+    if (isBlurred) {
+      typingContainer?.classList.add("blurred");
+    } else {
+      typingContainer?.classList.remove("blurred");
+      // Auto-focus when unblurred
+      setTimeout(() => {
+        typingContainer?.focus();
+      }, 50);
+    }
+    setShowButton(isBlurred);
+  }, [isBlurred]);
+  
+  const handleFocusClick = () => {
+    setIsBlurred(false);
+    setTimeout(() => {
+      typingContainerRef.current?.focus();
+    }, 50);
+  };
+
+  useEffect(() => {
+>>>>>>> 825c9e444cdc6317e7a2c347c2c16f0504c266d0
 
     const randomParagraph =
       wordsPunctuationNumberList[
         Math.floor(Math.random() * wordsPunctuationNumberList.length)
       ];
+<<<<<<< HEAD
       // setTimeout(() => {
       //   container.classList.remove('blurred');
       // }, 1500); 
+=======
+    // setTimeout(() => {
+    //   container.classList.remove('blurred');
+    // }, 1500);
+>>>>>>> 825c9e444cdc6317e7a2c347c2c16f0504c266d0
     setText(randomParagraph);
   }, []);
 
@@ -193,7 +261,7 @@ const TypingArea = () => {
       interval = setInterval(() => {
         setTime((prevTime) => {
           const newTime = prevTime + 1;
-          
+
           // Only update stats (and history) every second
           calculateStats();
           return newTime;
@@ -216,62 +284,63 @@ const TypingArea = () => {
   // const calculateStats = () => {
   //   const typedWords = typedText.trim().split(/\s+/).length;
   //   const wpmValue = Math.floor(typedWords / (time / 60));
-  
+
   //   let correctCount = 0;
   //   for (let i = 0; i < Math.min(typedText.length, text.length); i++) {
   //     if (typedText[i] === text[i]) {
   //       correctCount++;
   //     }
   //   }
-  
+
   //   const accuracyValue = Math.floor((correctCount / typedText.length) * 100);
-  
+
   //   setWpm(wpmValue);
   //   setAccuracy(accuracyValue);
   // };
-  
+
   const calculateStats = () => {
     const typedWords = typedText.trim().split(/\s+/).length;
     const wpmValue = Math.floor(typedWords / (time / 60));
-  
+
     let correctCount = 0;
     for (let i = 0; i < Math.min(typedText.length, text.length); i++) {
       if (typedText[i] === text[i]) {
         correctCount++;
       }
     }
-  
-    const accuracyValue = typedText.length > 0 
-      ? Math.floor((correctCount / typedText.length) * 100)
-      : 0;
-  
+
+    const accuracyValue =
+      typedText.length > 0
+        ? Math.floor((correctCount / typedText.length) * 100)
+        : 0;
+
     setWpm(wpmValue);
     setAccuracy(accuracyValue);
-  
+
     // ✅ Only update history if time is still running
     if (timerActive && time < selectedTime) {
-      setWpmHistory(prev => 
-        prev.length < selectedTime 
-          ? [...prev, wpmValue] 
-          : [...prev.slice(1), wpmValue] // Remove oldest entry if exceeding
+      setWpmHistory(
+        (prev) =>
+          prev.length < selectedTime
+            ? [...prev, wpmValue]
+            : [...prev.slice(1), wpmValue] // Remove oldest entry if exceeding
       );
-      setAccuracyHistory(prev => 
-        prev.length < selectedTime 
-          ? [...prev, accuracyValue] 
+      setAccuracyHistory((prev) =>
+        prev.length < selectedTime
+          ? [...prev, accuracyValue]
           : [...prev.slice(1), accuracyValue]
       );
     }
   };
-  
-  
+
   useEffect(() => {
     if (time === selectedTime) {
       setTimerActive(false);
       calculateStats();
       setShowResults(true);
-      
+
       // Save test results to history
-      setTestHistory(prev => {
+      setTestHistory((prev) => {
         const newHistory = [
           ...prev,
           {
@@ -280,175 +349,183 @@ const TypingArea = () => {
             correctChars,
             totalChars,
             time: selectedTime,
-            date: new Date().toISOString()
-          }
+            date: new Date().toISOString(),
+          },
         ];
         return newHistory.slice(-3); // Only keep last 3 items
       });
     }
   }, [time]);
 
-  
   // Update your chart configuration in the useEffect where you create the chart
-useEffect(() => {
-  if (showResults && chartRef.current) {
-    if (chartInstance.current) {
-      chartInstance.current.destroy();
-    }
-    const paddedWpmHistory = 
-      wpmHistory.length < selectedTime
-        ? [...wpmHistory, ...Array(selectedTime - wpmHistory.length).fill(wpmHistory[wpmHistory.length - 1] || 0)]
-        : wpmHistory.slice(0, selectedTime);
-
-    const paddedAccuracyHistory = 
-      accuracyHistory.length < selectedTime
-        ? [...accuracyHistory, ...Array(selectedTime - accuracyHistory.length).fill(accuracyHistory[accuracyHistory.length - 1] || 100)]
-        : accuracyHistory.slice(0, selectedTime);
-
-    const ctx = chartRef.current.getContext('2d');
-    chartInstance.current = new Chart(ctx, {
-      
-      type: 'line',
-      data: {
-        // labels: Array.from({length: wpmHistory.length}, (_, i) => i + 1),
-        // labels : wpmHistory.map((_, index) => index + 1), // 1, 2, 3, ..., up to selectedTime
-        labels: Array.from({ length: selectedTime }, (_, i) => i + 1), // 1, 2, ..., selectedTime
-
-        datasets: [
-          {
-            label: 'WPM',
-            data: paddedWpmHistory,
-            borderColor: 'rgb(75, 192, 192)',
-            backgroundColor: 'rgba(75, 192, 192, 0.1)',
-            borderWidth: 2,
-            tension: 0.3,
-            yAxisID: 'y',
-            pointRadius: 2, // Smaller points
-            pointHoverRadius: 4,
-            pointBackgroundColor: 'rgb(75, 192, 192)',
-          },
-          {
-            label: 'Accuracy %',
-            data: paddedAccuracyHistory,
-            borderColor: 'rgb(255, 99, 132)',
-            backgroundColor: 'rgba(255, 99, 132, 0.1)',
-            borderWidth: 2,
-            tension: 0.3,
-            yAxisID: 'y1',
-            pointRadius: 2,
-            pointHoverRadius: 4,
-            pointBackgroundColor: 'rgb(255, 99, 132)',
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        interaction: {
-          mode: 'index',
-          intersect: false,
-        },
-        plugins: {
-          legend: {
-            position: 'top',
-            labels: {
-              boxWidth: 12,
-              padding: 20,
-              font: {
-                size: 14
-              }
-            }
-          },
-          tooltip: {
-            backgroundColor: 'rgba(0,0,0,0.8)',
-            titleFont: {
-              size: 14
-            },
-            bodyFont: {
-              size: 12
-            },
-            padding: 10
-          }
-        },
-        scales: {
-          x: {
-            title: {
-              display: true,
-              text: 'Time (in seconds)',
-            },
-            ticks: {
-              color: '#666',
-              font: {
-                size: 12
-              },
-
-             stepSize: 1,
-             callback: (val) => val, 
-            },
-            title: {
-              display: true,
-              text: 'Time (seconds)',
-              color: '#666',
-              font: {
-                size: 14,
-                weight: 'bold'
-              }
-            }
-          },
-          y: {
-            beginAtZero: true,
-            type: 'linear',
-            display: true,
-            position: 'left',
-            grid: {
-              color: 'rgba(0,0,0,0.05)'
-            },
-            ticks: {
-              color: '#666',
-              font: {
-                size: 12
-              }
-            },
-            title: {
-              display: true,
-              text: 'WPM',
-              color: '#666',
-              font: {
-                size: 14,
-                weight: 'bold'
-              }
-            }
-          },
-          y1: {
-            type: 'linear',
-            display: true,
-            position: 'right',
-            min: 0,
-            max: 100,
-            grid: {
-              drawOnChartArea: false,
-            },
-            ticks: {
-              color: '#666',
-              font: {
-                size: 12
-              }
-            },
-            title: {
-              display: true,
-              text: 'Accuracy %',
-              color: '#666',
-              font: {
-                size: 14,
-                weight: 'bold'
-              }
-            },
-          }
-        }
+  useEffect(() => {
+    if (showResults && chartRef.current) {
+      if (chartInstance.current) {
+        chartInstance.current.destroy();
       }
-    });
-  }
-}, [showResults, wpmHistory, accuracyHistory, selectedTime]);
+      const paddedWpmHistory =
+        wpmHistory.length < selectedTime
+          ? [
+              ...wpmHistory,
+              ...Array(selectedTime - wpmHistory.length).fill(
+                wpmHistory[wpmHistory.length - 1] || 0
+              ),
+            ]
+          : wpmHistory.slice(0, selectedTime);
+
+      const paddedAccuracyHistory =
+        accuracyHistory.length < selectedTime
+          ? [
+              ...accuracyHistory,
+              ...Array(selectedTime - accuracyHistory.length).fill(
+                accuracyHistory[accuracyHistory.length - 1] || 100
+              ),
+            ]
+          : accuracyHistory.slice(0, selectedTime);
+
+      const ctx = chartRef.current.getContext("2d");
+      chartInstance.current = new Chart(ctx, {
+        type: "line",
+        data: {
+          // labels: Array.from({length: wpmHistory.length}, (_, i) => i + 1),
+          // labels : wpmHistory.map((_, index) => index + 1), // 1, 2, 3, ..., up to selectedTime
+          labels: Array.from({ length: selectedTime }, (_, i) => i + 1), // 1, 2, ..., selectedTime
+
+          datasets: [
+            {
+              label: "WPM",
+              data: paddedWpmHistory,
+              borderColor: "rgb(75, 192, 192)",
+              backgroundColor: "rgba(75, 192, 192, 0.1)",
+              borderWidth: 2,
+              tension: 0.3,
+              yAxisID: "y",
+              pointRadius: 2, // Smaller points
+              pointHoverRadius: 4,
+              pointBackgroundColor: "rgb(75, 192, 192)",
+            },
+            {
+              label: "Accuracy %",
+              data: paddedAccuracyHistory,
+              borderColor: "rgb(255, 99, 132)",
+              backgroundColor: "rgba(255, 99, 132, 0.1)",
+              borderWidth: 2,
+              tension: 0.3,
+              yAxisID: "y1",
+              pointRadius: 2,
+              pointHoverRadius: 4,
+              pointBackgroundColor: "rgb(255, 99, 132)",
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: {
+            mode: "index",
+            intersect: false,
+          },
+          plugins: {
+            legend: {
+              position: "top",
+              labels: {
+                boxWidth: 12,
+                padding: 20,
+                font: {
+                  size: 14,
+                },
+              },
+            },
+            tooltip: {
+              backgroundColor: "rgba(0,0,0,0.8)",
+              titleFont: {
+                size: 14,
+              },
+              bodyFont: {
+                size: 12,
+              },
+              padding: 10,
+            },
+          },
+          scales: {
+            x: {
+              title: {
+                display: true,
+                text: "Time (in seconds)",
+              },
+              ticks: {
+                color: "#666",
+                font: {
+                  size: 12,
+                },
+
+                stepSize: 1,
+                callback: (val) => val,
+              },
+              title: {
+                display: true,
+                text: "Time (seconds)",
+                color: "#666",
+                font: {
+                  size: 14,
+                  weight: "bold",
+                },
+              },
+            },
+            y: {
+              beginAtZero: true,
+              type: "linear",
+              display: true,
+              position: "left",
+              grid: {
+                color: "rgba(0,0,0,0.05)",
+              },
+              ticks: {
+                color: "#666",
+                font: {
+                  size: 12,
+                },
+              },
+              title: {
+                display: true,
+                text: "WPM",
+                color: "#666",
+                font: {
+                  size: 14,
+                  weight: "bold",
+                },
+              },
+            },
+            y1: {
+              type: "linear",
+              display: true,
+              position: "right",
+              min: 0,
+              max: 100,
+              grid: {
+                drawOnChartArea: false,
+              },
+              ticks: {
+                color: "#666",
+                font: {
+                  size: 12,
+                },
+              },
+              title: {
+                display: true,
+                text: "Accuracy %",
+                color: "#666",
+                font: {
+                  size: 14,
+                  weight: "bold",
+                },
+              },
+            },
+          },
+        },
+      });
+    }
+  }, [showResults, wpmHistory, accuracyHistory, selectedTime]);
 
   // Add a reset function
   const resetTest = () => {
@@ -464,18 +541,20 @@ useEffect(() => {
     setWpmHistory([]);
     setAccuracyHistory([]);
     setShowResults(false);
-    
+
     // Get new random text
     setText(getFilteredParagraphs());
   };
 
   const calculateConsistency = () => {
     if (wpmHistory.length < 2) return 100;
-    
+
     const avg = wpmHistory.reduce((a, b) => a + b, 0) / wpmHistory.length;
-    const variance = wpmHistory.reduce((a, b) => a + Math.pow(b - avg, 2), 0) / wpmHistory.length;
+    const variance =
+      wpmHistory.reduce((a, b) => a + Math.pow(b - avg, 2), 0) /
+      wpmHistory.length;
     const stdDev = Math.sqrt(variance);
-    
+
     return Math.max(0, 100 - Math.floor((stdDev / avg) * 100));
   };
 
@@ -485,18 +564,18 @@ useEffect(() => {
       setStarted(true);
       setTimerActive(true);
       setWpmHistory([0]);
-    setAccuracyHistory([100]);
+      setAccuracyHistory([100]);
     }
-  
+
     const { key } = e;
     if (key === "Backspace") {
       setTypedText((prev) => prev.slice(0, -1));
     }
-    
+
     // Updated condition to allow numbers and punctuation
     else if (/^[a-zA-Z0-9\s!.,?;:()&%$#@^*+=_-]$/.test(key)) {
       setTypedText((prev) => prev + key);
-      const currentChar = text[typedText.length]; 
+      const currentChar = text[typedText.length];
       if (key === currentChar) {
         setCorrectChars((prev) => prev + 1);
       }
@@ -504,7 +583,6 @@ useEffect(() => {
     }
     calculateStats();
   };
-  
 
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
@@ -592,6 +670,7 @@ useEffect(() => {
 
   return (
     <div className="container">
+<<<<<<< HEAD
       <div className="login-container">
       {showButton && !isLoggedIn && ( 
     <button onClick={() => setShowLogin(true)} className="focus-button">
@@ -656,6 +735,129 @@ useEffect(() => {
     {showButton && (
         <button onClick={handleFocusClick} className="focus-button">
            Click here to focus
+=======
+      <div className="auth-container">
+        {showButton && !isLoggedIn && (
+          <button
+            onClick={() => setShowLogin(true)}
+            className="auth-button primary"
+          >
+            🔐 Login / Sign Up
+          </button>
+        )}
+
+        {(showLogin || showSignup) && !isLoggedIn && (
+          <div className="auth-modal">
+            <div className="auth-content">
+              <button
+                className="close-button"
+                onClick={() => {
+                  setShowLogin(false);
+                  setShowSignup(false);
+                }}
+              >
+                ×
+              </button>
+
+              <h2>{showSignup ? "Create Account" : "Welcome Back"}</h2>
+
+              <form
+                onSubmit={showSignup ? handleEmailSignup : handleEmailLogin}
+                className="auth-form"
+              >
+                <div className="form-group">
+                  <label htmlFor="email">Email</label>
+                  <input
+                    id="email"
+                    type="email"
+                    placeholder="your@email.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="password">Password</label>
+                  <input
+                    id="password"
+                    type="password"
+                    placeholder={
+                      showSignup ? "Choose a password" : "Your password"
+                    }
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    minLength={showSignup ? "6" : ""}
+                  />
+                  {showSignup && <small>Minimum 6 characters</small>}
+                </div>
+
+                <button type="submit" className="auth-button primary">
+                  {showSignup ? "Sign Up" : "Login"}
+                </button>
+              </form>
+
+              {!showSignup && (
+                <>
+                  <div className="divider">or</div>
+                  <button onClick={handleLogin} className="auth-button google">
+                    <img
+                      src="https://www.google.com/favicon.ico"
+                      alt="Google"
+                      width="16"
+                    />
+                    Continue with Google
+                  </button>
+
+                  <div className="auth-footer">
+                    Don't have an account?{" "}
+                    <button
+                      onClick={() => setShowSignup(true)}
+                      className="text-button"
+                    >
+                      Sign up
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {showSignup && (
+                <div className="auth-footer">
+                  Already have an account?{" "}
+                  <button
+                    onClick={() => setShowSignup(false)}
+                    className="text-button"
+                  >
+                    Login
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {isLoggedIn && user && (
+          <div className="user-panel">
+            <div className="user-greeting">
+              <h5>👋 
+                Welcome,{" "}
+                <strong>{user.displayName || user.email.split("@")[0]}</strong>
+              </h5>
+            </div>
+            <button
+              onClick={() => auth.signOut().then(() => setIsLoggedIn(false))}
+              className="auth-button logout"
+            >
+              Logout
+            </button>
+          </div>
+        )}
+      </div>
+      {showButton && (
+        <button onClick={handleFocusClick} className="focus-button">
+          Click here to focus
+>>>>>>> 825c9e444cdc6317e7a2c347c2c16f0504c266d0
         </button>
       )}
       <div className="header">
@@ -702,35 +904,44 @@ useEffect(() => {
         </div>
       </div>
       {!showResults ? (
-      <div className="typing-container" tabIndex={0} onKeyDown={handleKeyDown}>
-        <div className="text">
-          {(Array.isArray(text) ? text : text.split("")).map((char, index) => {
-            const isCorrect =
-              index < typedText.length && typedText[index] === text[index];
-            const isIncorrect =
-              index < typedText.length && typedText[index] !== text[index];
+        <div
+          className="typing-container"
+          tabIndex={0}
+          onKeyDown={handleKeyDown}
+          ref={typingContainerRef}
+        >
+          <div className="text">
+            {(Array.isArray(text) ? text : text.split("")).map(
+              (char, index) => {
+                const isCorrect =
+                  index < typedText.length && typedText[index] === text[index];
+                const isIncorrect =
+                  index < typedText.length && typedText[index] !== text[index];
 
-            return (
-              <span
-                key={index}
-                className={`${isCorrect ? "green" : ""} ${
-                  isIncorrect ? "red" : ""
-                }`}
-              >
-                {char}
-                {index === typedText.length - 1 && <span className="cursor" />}
-              </span>
-            );
-          })}
-          {typedText.length < text.length && !timeUp && (
-            <span className="cursor" />
-          )}
+                return (
+                  <span
+                    key={index}
+                    className={`${isCorrect ? "green" : ""} ${
+                      isIncorrect ? "red" : ""
+                    }`}
+                  >
+                    {char}
+                    {index === typedText.length - 1 && (
+                      <span className="cursor" />
+                    )}
+                  </span>
+                );
+              }
+            )}
+            {typedText.length < text.length && !timeUp && (
+              <span className="cursor" />
+            )}
+          </div>
         </div>
-      </div>
-       ) : (
+      ) : (
         <div className="results-container">
           <h2>Test Results</h2>
-          
+
           <div className="summary-stats">
             <div className="stat-box">
               <div className="stat-value">{wpm}</div>
@@ -741,7 +952,9 @@ useEffect(() => {
               <div className="stat-label">Accuracy</div>
             </div>
             <div className="stat-box">
-              <div className="stat-value">{correctChars}/{totalChars}</div>
+              <div className="stat-value">
+                {correctChars}/{totalChars}
+              </div>
               <div className="stat-label">Chars</div>
             </div>
             <div className="stat-box">
@@ -749,29 +962,37 @@ useEffect(() => {
               <div className="stat-label">Time</div>
             </div>
           </div>
-          
+
           <div className="graph-container">
             <canvas ref={chartRef}></canvas>
           </div>
-          
+
           <div className="detailed-stats">
             <div>
-              <h3>Raw WPM: {Math.floor((typedText.trim().split(/\s+/).length * 60) / selectedTime)}</h3>
+              <h3>
+                Raw WPM:{" "}
+                {Math.floor(
+                  (typedText.trim().split(/\s+/).length * 60) / selectedTime
+                )}
+              </h3>
               <h3>Consistency: {calculateConsistency()}%</h3>
             </div>
-            
+
             <div className="test-history">
               <h3>Recent Tests</h3>
-              {testHistory.slice().reverse().map((test, index) => (
-                <div key={index} className="history-item">
-                  <span>{test.wpm} wpm</span>
-                  <span>{test.accuracy}%</span>
-                  <span>{test.time}s</span>
-                </div>
-              ))}
+              {testHistory
+                .slice()
+                .reverse()
+                .map((test, index) => (
+                  <div key={index} className="history-item">
+                    <span>{test.wpm} wpm</span>
+                    <span>{test.accuracy}%</span>
+                    <span>{test.time}s</span>
+                  </div>
+                ))}
             </div>
           </div>
-          
+
           <button onClick={resetTest} className="restart-button">
             Try Again
           </button>
