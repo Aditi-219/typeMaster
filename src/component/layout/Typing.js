@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./Typing.css";
 import { Chart } from 'chart.js/auto';
-import { getAuth, provider, signInWithPopup,createUserWithEmailAndPassword, signInWithEmailAndPassword } from './firebase';
+import { getAuth, provider, signInWithPopup,createUserWithEmailAndPassword, signInWithEmailAndPassword,onAuthStateChanged  } from './firebase';
 
 
 
@@ -113,6 +113,19 @@ const TypingArea = () => {
       console.error("Error signing out", error);
     }
   };
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setIsLoggedIn(true);
+        setUser(user);
+      } else {
+        setIsLoggedIn(false);
+        setUser(null);
+      }
+    });
+    return () => unsubscribe(); 
+  }, []);
 
   
   
