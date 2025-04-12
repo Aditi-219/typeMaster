@@ -1,20 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./Typing.css";
-<<<<<<< HEAD
 import { Chart } from 'chart.js/auto';
 import { getAuth, provider, signInWithPopup,createUserWithEmailAndPassword, signInWithEmailAndPassword,onAuthStateChanged  } from './firebase';
 
 
-=======
-import { Chart } from "chart.js/auto";
-import {
-  getAuth,
-  provider,
-  signInWithPopup,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from "./firebase";
->>>>>>> 825c9e444cdc6317e7a2c347c2c16f0504c266d0
 
 const TypingArea = () => {
   // Array of predefined paragraphs
@@ -81,13 +70,8 @@ const TypingArea = () => {
 
   const [showLogin, setShowLogin] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-<<<<<<< HEAD
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-=======
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
->>>>>>> 825c9e444cdc6317e7a2c347c2c16f0504c266d0
   const [user, setUser] = useState(null);
   const [showSignup, setShowSignup] = useState(false);
 
@@ -96,15 +80,7 @@ const TypingArea = () => {
   const handleEmailSignup = async (e) => {
     e.preventDefault();
     try {
-<<<<<<< HEAD
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-=======
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
->>>>>>> 825c9e444cdc6317e7a2c347c2c16f0504c266d0
       setUser(userCredential.user);
       setIsLoggedIn(true);
       setShowLogin(false); // Close the login popup
@@ -118,15 +94,7 @@ const TypingArea = () => {
   const handleEmailLogin = async (e) => {
     e.preventDefault();
     try {
-<<<<<<< HEAD
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-=======
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
->>>>>>> 825c9e444cdc6317e7a2c347c2c16f0504c266d0
       setUser(userCredential.user);
       setIsLoggedIn(true);
       setShowLogin(false); // Close the login popup
@@ -146,7 +114,6 @@ const TypingArea = () => {
     }
   };
 
-<<<<<<< HEAD
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -166,10 +133,6 @@ const TypingArea = () => {
 
   const [isBlurred, setIsBlurred] = useState(true); 
   const [showButton, setShowButton] = useState(true); 
-=======
-  const [isBlurred, setIsBlurred] = useState(true);
-  const [showButton, setShowButton] = useState(true);
->>>>>>> 825c9e444cdc6317e7a2c347c2c16f0504c266d0
   const [text, setText] = useState("");
   const [typedText, setTypedText] = useState("");
   const [started, setStarted] = useState(false);
@@ -192,30 +155,6 @@ const TypingArea = () => {
   const typingContainerRef = useRef(null);
 
   useEffect(() => {
-<<<<<<< HEAD
-
-    const typingContainer = document.querySelector('.typing-container');
-    if (isBlurred) {
-      typingContainer.classList.add('blurred');
-    } else {
-      typingContainer.classList.remove('blurred');
-    }
-
-
-    setShowButton(isBlurred);
-
-  }, [isBlurred]);
-
-
-  
-  const handleFocusClick = () => {
-    setIsBlurred(false);
-  };
-
-  useEffect(() => {
-    // const container = document.querySelector('.container');
-    // container.classList.add('blurred');
-=======
     const typingContainer = typingContainerRef.current;
     if (isBlurred) {
       typingContainer?.classList.add("blurred");
@@ -237,21 +176,14 @@ const TypingArea = () => {
   };
 
   useEffect(() => {
->>>>>>> 825c9e444cdc6317e7a2c347c2c16f0504c266d0
 
     const randomParagraph =
       wordsPunctuationNumberList[
         Math.floor(Math.random() * wordsPunctuationNumberList.length)
       ];
-<<<<<<< HEAD
-      // setTimeout(() => {
-      //   container.classList.remove('blurred');
-      // }, 1500); 
-=======
     // setTimeout(() => {
     //   container.classList.remove('blurred');
     // }, 1500);
->>>>>>> 825c9e444cdc6317e7a2c347c2c16f0504c266d0
     setText(randomParagraph);
   }, []);
 
@@ -670,72 +602,6 @@ const TypingArea = () => {
 
   return (
     <div className="container">
-<<<<<<< HEAD
-      <div className="login-container">
-      {showButton && !isLoggedIn && ( 
-    <button onClick={() => setShowLogin(true)} className="focus-button">
-      🔐Login
-    </button>
-  )}
-  
-  {showLogin && !isLoggedIn && (
-    <div className="login-popup">
-      <form onSubmit={handleEmailLogin}>
-            <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <button type="submit">Login with Email</button>
-          </form>
-           <button onClick={() => setShowSignup(true)}>
-              Don't have an account? Sign up
-            </button>
-      {/* <h3>Login to Play</h3> */}
-      <button onClick={handleLogin}>Login with Google</button>
-    </div>
-  )}
-  {showSignup && (
-        <div className="login-popup">
-          <form onSubmit={handleEmailSignup}>
-            <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <button type="submit">Sign up with Email</button>
-          </form>
-        </div>
-      )}
-  
-  {isLoggedIn && user && (
-    <div className="user-info">
-      <p>Welcome, {user.displayName || user.email}!</p>
-      <button onClick={() => auth.signOut().then(() => setIsLoggedIn(false))}>
-        Logout
-      </button>
-    </div>
-  )}  </div>
-     
-
-    {showButton && (
-        <button onClick={handleFocusClick} className="focus-button">
-           Click here to focus
-=======
       <div className="auth-container">
         {showButton && !isLoggedIn && (
           <button
@@ -857,7 +723,6 @@ const TypingArea = () => {
       {showButton && (
         <button onClick={handleFocusClick} className="focus-button">
           Click here to focus
->>>>>>> 825c9e444cdc6317e7a2c347c2c16f0504c266d0
         </button>
       )}
       <div className="header">
