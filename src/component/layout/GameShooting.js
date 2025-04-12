@@ -1,108 +1,369 @@
 import React, { useState, useEffect } from 'react';
 import './GameShooting.css';
 
-
+// Word list remains the same
 const wordsList = [
-    "galaxy", "orbit", "keyboard", "react", "alien", "space", "debug", "launch", "comet", "rocket",
-    "code", "javascript", "planet", "starship", "binary", "meteor", "syntax", "deploy", "cluster",
-    "function", "loop", "variable", "nebula", "compile", "pixel", "reactor", "api", "server", "logic",
-    "array", "object", "cyber", "galactic", "syntax", "terminal", "python", "frontend", "backend",
-    "fusion", "cosmic", "gravity", "void", "module", "export", "import", "virtual", "render", "element",
-    "shoot", "target", "explode", "enemy", "laser", "spaceship", "power", "boost", "shield", "mission",
-    "explorer", "thruster", "hover", "drift", "asteroid", "moon", "sun", "system", "velocity", "warp",
-    "quasar", "nova", "hyperdrive", "interface", "glitch", "probe", "cluster", "signal", "upload", "download",
-    "energy", "freeze", "burn", "shift", "ignite", "zoom", "clone", "crash", "refactor", "execute", "build",
-    "reboot", "portal", "dimension", "interstellar", "transmit", "command", "console", "spacebar", "debugger",
-    "timeline", "matrix", "avatar", "stream", "launchpad", "byte", "cache", "index", "firewall", "encrypt",
-    "mission", "ship", "blast", "zebra", "cannon", "neon", "ghost", "phantom", "flare", "cyborg"
-  ];
-  
+  "alien", "orbit", "comet", "lunar", "solar", "phase", "quark", "flare", 
+  "probe", "rover", "laser", "drone", "robot", "pixel", "modem", "cache",
+  "asteroid", "velocity", "nebula", "galaxy", "eclipse", "satellite",
+  "spacecraft", "astronaut", "universe", "quantum", "gravity", "plasma",
+  "code", "bug", "app", "web", "data", "loop", "html", "css", "java", "python",
+  "ruby", "swift", "linux", "mysql", "query", "stack", "queue", "logic",
+  "debug", "virus", "cloud", "agile", "spark", "input", "output", "server",
+  "client", "syntax", "error", "compile", "binary", "script", "object",
+  "function", "variable", "compiler", "algorithm", "framework", "terminal",
+  "metadata", "network", "digital", "analog", "kernel", "driver", "plugin",
+  "banana", "pizza", "llama", "robot", "ninja", "zombie", "pirate", "wizard",
+  "unicorn", "dinosaur", "spaghetti", "chocolate", "hamburger", "watermelon",
+  "rainbow", "rocket", "turtle", "dragon", "monster", "ghost", "knight",
+  "launch", "crash", "blast", "click", "press", "enter", "delete", "escape",
+  "return", "shift", "control", "command", "scroll", "toggle", "update",
+  "upload", "download", "install", "unzip", "format", "reboot", "shutdown"
+];
+
+const alienTypes = ['👽', '👾', '🤖', '🛸', '👹', '👺'];
+
+// Modern color scheme
+const colors = {
+  darkSpace: '#0b0a1a',
+  deepSpace: '#1a1a2e',
+  spaceBlue: '#16213e',
+  electricBlue: '#00dbde',
+  neonPink: '#fc00ff',
+  plasmaYellow: '#f9f871',
+  textLight: '#e6f1ff'
+};
 
 const GameShooting = () => {
-  const [words, setWords] = useState([]);
+  const [currentWords, setCurrentWords] = useState([]);
   const [typedWord, setTypedWord] = useState('');
   const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
+  const [lives, setLives] = useState(3);
+  const [level, setLevel] = useState(1);
+  const [levelProgress, setLevelProgress] = useState(0);
+
+  const fireLaser = (targetPosition, targetProgress) => {
+    const gameArena = document.querySelector('.game-arena');
+    
+    // Calculate the angle from spaceship to target
+    const spaceshipLeft = 50; // Spaceship is centered
+    const targetLeft = targetPosition;
+    const angle = Math.atan2(
+      (targetProgress * 100) - 100, // Y difference (from bottom to target)
+      targetLeft - spaceshipLeft    // X difference
+    ) * (180 / Math.PI);
+    
+    // Create laser beam
+    const laser = document.createElement('div');
+    laser.className = 'laser-beam';
+    laser.style.left = `${spaceshipLeft}%`;
+    laser.style.bottom = '30px'; // Align with spaceship
+    laser.style.transform = `rotate(${angle}deg)`;
+    
+    // Create laser hit effect at target position
+    const laserHit = document.createElement('div');
+    laserHit.className = 'laser-hit';
+    laserHit.style.left = `${targetPosition}%`;
+    laserHit.style.top = `${targetProgress * 100}%`;
+    
+    gameArena.appendChild(laser);
+    gameArena.appendChild(laserHit);
+    
+    // Remove elements after animation
+    setTimeout(() => {
+      laser.remove();
+      laserHit.remove();
+    }, 500);
+  };
+
+  // Game parameters with smooth progression
+  const getMaxWords = () => {
+    if (level < 4) return 1;
+    if (level < 7) return 2;
+    if (level < 10) return 3;
+    return 4;
+  };
+
+  const gameParams = {
+    baseSpeed: 0.0015,
+    speedIncrease: 0.0001,
+    maxWords: getMaxWords(),
+    emojiSize: 1.5 + (level * 0.1),
+    spawnArea: {
+      minLeft: 15,
+      maxLeft: 85
+    },
+    spawnDelay: Math.max(1200, 2000 - (level * 20))
+  };
+
+  const getFilteredWords = () => {
+    const maxLength = 4 + Math.floor(level / 3);
+    return wordsList.filter(word => word.length <= Math.min(maxLength, 7));
+  };
+
+  const filteredWords = getFilteredWords();
+
   const restartGame = () => {
-    setWords([]);
+    setCurrentWords([]);
     setScore(0);
     setTypedWord('');
     setGameOver(false);
+    setLives(3);
+    setLevel(1);
+    setLevelProgress(0);
+    spawnNewWord();
   };
-  
+
+  const getRandomPosition = () => {
+    return gameParams.spawnArea.minLeft + 
+           Math.random() * (gameParams.spawnArea.maxLeft - gameParams.spawnArea.minLeft);
+  };
+
+  const spawnNewWord = () => {
+    if (currentWords.length >= gameParams.maxWords || gameOver) return;
+
+    const randomWord = filteredWords[Math.floor(Math.random() * filteredWords.length)];
+    const randomAlien = alienTypes[Math.floor(Math.random() * alienTypes.length)];
+    
+    const newWord = {
+      id: Date.now() + Math.random(),
+      text: randomWord,
+      position: getRandomPosition(),
+      alien: randomAlien,
+      progress: 0,
+      glowColor: `hsl(${Math.random() * 60 + 180}, 80%, 60%)`, // Cool colors only
+      rotation: Math.random() * 15 - 7.5
+    };
+
+    setCurrentWords(prev => [...prev, newWord]);
+  };
+
+  const showExplosion = (word) => {
+    const explosionContainer = document.createElement('div');
+    explosionContainer.className = 'explosion-container';
+    explosionContainer.style.left = `${word.position}%`;
+    explosionContainer.style.top = `${word.progress * 100}%`;
+    
+    for (let i = 0; i < 8; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'explosion-particle';
+      particle.style.setProperty('--tx', Math.random() * 2 - 1);
+      particle.style.setProperty('--ty', Math.random() * 2 - 1);
+      particle.textContent = ['✦', '✧', '❂', '✺'][Math.floor(Math.random() * 4)];
+      particle.style.color = [colors.electricBlue, colors.neonPink, colors.plasmaYellow][Math.floor(Math.random() * 3)];
+      explosionContainer.appendChild(particle);
+    }
+    
+    document.querySelector('.game-arena').appendChild(explosionContainer);
+    setTimeout(() => explosionContainer.remove(), 1000);
+  };
 
   const handleTyping = (e) => {
-    if (gameOver) return; // stop if game is over
-  
-    const value = e.target.value;
+    if (gameOver) return;
+    
+    const value = e.target.value.toLowerCase();
     setTypedWord(value);
-  
-    const matchedWord = words.find((word) => word.text === value);
+
+    const matchedWord = currentWords.find(word => word.text === value);
     if (matchedWord) {
-      setWords(words.filter((word) => word.id !== matchedWord.id));
-      setScore((prev) => prev + 1);
+      fireLaser(matchedWord.position, matchedWord.progress);
+      const points = 10 * level;
+      setScore(prev => prev + points);
       setTypedWord('');
+      
+      setCurrentWords(prev => {
+        const newWords = prev.filter(word => word.id !== matchedWord.id);
+        if (newWords.length < gameParams.maxWords) {
+          setTimeout(spawnNewWord, 300);
+        }
+        return newWords;
+      });
+
+      showExplosion(matchedWord);
+      
+      setLevelProgress(prev => {
+        const newProgress = prev + (points / (level * 100));
+        if (newProgress >= 1) {
+          setLevel(prev => prev + 1);
+          showLevelUp();
+          return 0;
+        }
+        return newProgress;
+      });
     }
   };
 
+  const showLevelUp = () => {
+    const notification = document.createElement('div');
+    notification.className = 'level-up';
+    notification.textContent = `LEVEL ${level + 1}!`;
+    notification.style.color = colors.electricBlue;
+    document.querySelector('.game-header').appendChild(notification);
+    setTimeout(() => notification.remove(), 2000);
+  };
+
+  // Word spawning
   useEffect(() => {
-    setWords([]);
-    setScore(0);
-    setTypedWord('');
-    setGameOver(false);
-  }, []);
-  
-  
-  // Generate a new word every few seconds
-  useEffect(() => {
+    if (gameOver) return;
     const interval = setInterval(() => {
-      const randomWord = wordsList[Math.floor(Math.random() * wordsList.length)];
-      setWords((prev) => [...prev, { text: randomWord, id: Date.now(),position: Math.random(), motion: Math.floor(Math.random() * 3),  }]);
-    },3000);
-    
+      if (currentWords.length < gameParams.maxWords) {
+        spawnNewWord();
+      }
+    }, gameParams.spawnDelay);
     return () => clearInterval(interval);
-  }, [words, gameOver]);
+  }, [currentWords.length, gameOver, gameParams.maxWords, gameParams.spawnDelay]);
 
- 
+  // Word movement
+  useEffect(() => {
+    if (gameOver || currentWords.length === 0) return;
+    
+    const speed = gameParams.baseSpeed + (level * gameParams.speedIncrease);
+    const interval = setInterval(() => {
+      setCurrentWords(prev => {
+        const updatedWords = prev.map(word => ({
+          ...word,
+          progress: word.progress + speed
+        })).filter(word => {
+          if (word.progress >= 1) {
+            setLives(prev => {
+              const newLives = prev - 1;
+              if (newLives <= 0) setGameOver(true);
+              return newLives;
+            });
+            return false;
+          }
+          return true;
+        });
+        return updatedWords;
+      });
+    }, 16);
+    return () => clearInterval(interval);
+  }, [gameOver, level, currentWords.length]);
+
+  // Initial word
+  useEffect(() => {
+    spawnNewWord();
+  }, []);
+
   return (
-    <div className="shooting-game">
-       
-      <h1>🔥 Typing Shooter Game</h1>
-      <h2>Score: {score}</h2>
-      <div className="falling-words">
-  {words.map((word) => (
-    <div key={word.id} className={`alien-container  motion-${word.motion}`}
-    style={{ "--rand": word.position,
-        animationDuration: `${8 + Math.random() * 4}s`
-    }}
-    >
-    
-      <div className="alien-word">{word.text}</div>
-      {/* <div className="alien-body">
-  <img src="/images/alien1.png" alt="alien" style={{ width: '40px' }} />
-</div> */}
-      <div className="alien-body">👽</div> 
-    </div>
-    
-  ))}
-</div>
-{gameOver && (
-  <div className="game-over">
-    <h2>💀 Game Over!</h2>
-    <p>Your score: {score}</p>
-    <button onClick={restartGame}>Restart</button>
-  </div>
-)}
+    <div className="game-container" style={{ background: colors.darkSpace }}>
+      {/* Nebula background effect */}
+      <div className="nebula-bg">
+        <div className="nebula-layer-1"></div>
+        <div className="nebula-layer-2"></div>
+      </div>
 
+      {/* Game header */}
+      <div className="game-header">
+        <h1 className="game-title">
+          <span style={{ 
+            background: `linear-gradient(135deg, ${colors.electricBlue}, ${colors.neonPink})`,
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent'
+          }}>
+            COSMIC TYPER
+          </span>
+        </h1>
+        
+        <div className="game-stats">
+          <div className="stat">
+            <span>SCORE</span>
+            <span style={{ color: colors.plasmaYellow }}>{score}</span>
+          </div>
+          
+          <div className="stat">
+            <span>LEVEL</span>
+            <div className="level-meter">
+              <div className="level-number">{level}</div>
+              <div className="level-bar">
+                <div 
+                  className="level-fill" 
+                  style={{ 
+                    width: `${levelProgress * 100}%`,
+                    background: `linear-gradient(to right, ${colors.electricBlue}, ${colors.neonPink})`
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+          
+          <div className="stat">
+            <span>LIVES</span>
+            <span style={{ color: '#ff5e5e' }}>{"♥".repeat(lives)}</span>
+          </div>
+        </div>
+      </div>
 
-      
-      <input
-        type="text"
-        value={typedWord}
-        onChange={handleTyping}
-        placeholder="Type here..."
-        autoFocus
-      />
+      {/* Game arena */}
+      <div className="game-arena">
+        {/* Sleek spaceship */}
+        <div className="spaceship">
+          <div className="ship-core">🛸</div>
+          <div className="engine-exhaust"></div>
+        </div>
+
+        {/* Aliens */}
+        {currentWords.map(word => (
+          <div 
+            key={word.id}
+            className="alien"
+            style={{ 
+              left: `${word.position}%`,
+              top: `${word.progress * 100}%`,
+              fontSize: `${gameParams.emojiSize}rem`,
+              color: word.glowColor,
+              transform: `rotate(${word.rotation}deg)`
+            }}
+          >
+            <div className="alien-label">{word.text}</div>
+            <div className="alien-char">{word.alien}</div>
+            <div 
+              className="alien-aura" 
+              style={{ 
+                boxShadow: `0 0 20px ${word.glowColor}`,
+                background: word.glowColor
+              }}
+            />
+          </div>
+        ))}
+      </div>
+
+      {/* Input field */}
+      <div className="input-container">
+        <input
+          type="text"
+          value={typedWord}
+          onChange={handleTyping}
+          placeholder="TYPE THE WORD..."
+          style={{
+            border: `2px solid ${colors.electricBlue}`,
+            boxShadow: `0 0 15px ${colors.electricBlue}`
+          }}
+        />
+      </div>
+
+      {/* Game over screen */}
+      {gameOver && (
+        <div className="game-over">
+          <div className="game-over-content">
+            <h2 style={{ color: colors.electricBlue }}>GAME OVER</h2>
+            <div className="final-stats">
+              <p>FINAL SCORE: <span>{score}</span></p>
+              <p>LEVEL REACHED: <span>{level}</span></p>
+            </div>
+            <button 
+              className="restart-btn"
+              onClick={restartGame}
+              style={{
+                background: `linear-gradient(135deg, ${colors.electricBlue}, ${colors.neonPink})`
+              }}
+            >
+              PLAY AGAIN
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
