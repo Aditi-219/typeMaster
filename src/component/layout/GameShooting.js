@@ -85,6 +85,35 @@ const GameShooting = () => {
     return 4;
   };
 
+  // 🔊 Resume audio when user first clicks anywhere
+useEffect(() => {
+  const resumeAudio = () => {
+    const audio = document.getElementById('bg-audio');
+    if (audio && audio.paused) {
+      audio.volume = 0.3;
+      audio.play().catch(() => {});
+    }
+    window.removeEventListener('click', resumeAudio);
+  };
+  window.addEventListener('click', resumeAudio);
+  return () => window.removeEventListener('click', resumeAudio);
+}, []);
+
+useEffect(() => {
+  const bgAudio = document.getElementById('bg-audio');
+  if (!bgAudio) return;
+
+  if (gameOver) {
+    bgAudio.pause();
+  } else {
+    bgAudio.volume = 0.3;
+    bgAudio.play().catch(err => {
+      console.warn("Background music autoplay was blocked by the browser.");
+    });
+  }
+}, [gameOver]);
+
+
   const gameParams = {
     baseSpeed: 0.0015,
     speedIncrease: 0.0001,
@@ -144,6 +173,7 @@ const GameShooting = () => {
     explosionContainer.className = 'explosion-container';
     explosionContainer.style.left = `${word.position}%`;
     explosionContainer.style.top = `${word.progress * 100}%`;
+    new Audio('/Laser_sound.mp3').play();
     
     for (let i = 0; i < 8; i++) {
       const particle = document.createElement('div');
@@ -200,6 +230,7 @@ const GameShooting = () => {
     notification.textContent = `LEVEL ${level + 1}!`;
     notification.style.color = colors.electricBlue;
     document.querySelector('.game-header').appendChild(notification);
+    new Audio('/Levelup_sound.mp3').play();
     setTimeout(() => notification.remove(), 2000);
   };
 
@@ -216,6 +247,7 @@ const GameShooting = () => {
 
   // Word movement
   useEffect(() => {
+
     if (gameOver || currentWords.length === 0) return;
     
     const speed = gameParams.baseSpeed + (level * gameParams.speedIncrease);
@@ -226,9 +258,15 @@ const GameShooting = () => {
           progress: word.progress + speed
         })).filter(word => {
           if (word.progress >= 1) {
+          
             setLives(prev => {
               const newLives = prev - 1;
-              if (newLives <= 0) setGameOver(true);
+             if (newLives <= 0) {
+                new Audio('/Gameover_sound.mp3').play();
+                setGameOver(true);
+             }else  {new Audio('/lifelose_sound.mp3').play();}
+             
+
               return newLives;
             });
             return false;
@@ -241,18 +279,39 @@ const GameShooting = () => {
     return () => clearInterval(interval);
   }, [gameOver, level, currentWords.length]);
 
+
   // Initial word
   useEffect(() => {
     spawnNewWord();
   }, []);
 
   return (
-    <div className="game-container" style={{ background: colors.darkSpace }}>
+    <div className="game-container" /*style={{ background: colors.darkSpace }}*/>
+      {/* Space video background */}
+      <video
+      className="space-video-bg"
+      autoPlay
+      muted
+      loop
+      playsInline
+      preload="auto"
+    >
+      <source src="/space_bg.mp4" type="video/mp4" />
+      Your browser does not support the video tag.
+    </video>
       {/* Nebula background effect */}
-      <div className="nebula-bg">
+      {/* <div className="nebula-bg">
         <div className="nebula-layer-1"></div>
         <div className="nebula-layer-2"></div>
-      </div>
+      </div> */}
+
+    <audio
+      id="bg-audio"
+      src="/Spacebg_sound.mp3"
+      autoPlay
+      loop
+      preload="auto"
+    />
 
       {/* Game header */}
       <div className="game-header">
