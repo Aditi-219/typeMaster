@@ -169,8 +169,24 @@ const TypingArea = () => {
     }
     // setShowFocusButton(isBlurred);
   }, [isBlurred]);
+
+
+  useEffect(() => {
+    const typingContainer = typingContainerRef.current;
+
+    const handleFocus = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+    };
+    typingContainer?.addEventListener("focus", handleFocus, true);
+    return () => {
+      typingContainer?.removeEventListener("focus", handleFocus, true);
+    };
+  }, []);
   
-  const handleFocusClick = () => {
+  const handleFocusClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
     setIsBlurred(false);
     setShowFocusButton(false);
     setTimeout(() => {
@@ -179,7 +195,20 @@ const TypingArea = () => {
   };
 
   useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.code === 'Space') {
+        e.preventDefault();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown, { passive: false });
+  
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+  
 
+  useEffect(() => {
     const randomParagraph =
       wordsPunctuationNumberList[
         Math.floor(Math.random() * wordsPunctuationNumberList.length)
@@ -775,9 +804,10 @@ const TypingArea = () => {
           <div className="additional-stats">
             <div>⚡ {wpm} WPM</div>
             <div>🎯 {accuracy}% Accuracy</div>
-          </div>
+          </div>   
         </div>
       </div>
+      
       {!showResults ? (
         <div
           className="typing-container"

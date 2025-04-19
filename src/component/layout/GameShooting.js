@@ -77,6 +77,29 @@ const GameShooting = () => {
     }, 500);
   };
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      const tag = document.activeElement.tagName;
+      const isTyping = tag === 'INPUT' || tag === 'TEXTAREA';
+  
+      if (
+        ['Space', 'ArrowDown', 'ArrowUp', 'ArrowLeft', 'ArrowRight'].includes(e.code) &&
+        !isTyping
+      ) {
+        e.preventDefault();
+      }
+    };
+  
+    // Attach listener to document, not window
+    document.addEventListener('keydown', handleKeyDown, { passive: false });
+  
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+  
+  
+
   // Game parameters with smooth progression
   const getMaxWords = () => {
     if (level < 4) return 1;
