@@ -1,0 +1,88 @@
+.multiplayer-container {
+    max-width: 500px;
+    margin: 4rem auto;
+    padding: 2rem;
+    background-color:rgb(72, 35, 103);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  .multiplayer-container h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+  
+  .multiplayer-container h2 {
+    font-size: 1.25rem;
+    color: White;
+    margin: 1rem 0;
+  }
+  
+  .multiplayer-container input {
+    width: 80%;
+    padding: 10px 12px;
+    font-size: 1rem;
+    margin: 1rem 0;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+  }
+  
+  .multiplayer-container button {
+    background-color: #2e86de;
+    color: white;
+    padding: 10px 20px;
+    margin: 0.5rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .multiplayer-container button:hover {
+    background-color: #2169c5;
+  }
+  
+  .auth-container {
+    text-align: center;
+    margin-top: 5rem;
+    font-size: 1.2rem;
+  }
+  
+  .game-text {
+    margin-top: 1.5rem;
+    background-color: white;
+    padding: 1rem;
+    border-radius: 8px;
+    color: black;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+    text-align: left;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+  
+  .player {
+    margin: 1rem 0;
+  }
+  
+  .player textarea {
+    width: 100%;
+    height: 100px;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 1rem;
+    font-family: monospace;
+    resize: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    border: 1px solid #ccc;
+  }
+
+  .player:nth-child(odd) {
+    background-color: #f0f0ff;
+    padding: 1rem;
+    border-radius: 8px;
+  }
+  

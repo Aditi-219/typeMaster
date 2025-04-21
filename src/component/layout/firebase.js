@@ -1,6 +1,7 @@
   // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
+import { getFirestore, doc, setDoc, updateDoc, getDoc, onSnapshot } from 'firebase/firestore';
 import { getAuth, GoogleAuthProvider, signInWithPopup,createUserWithEmailAndPassword, signInWithEmailAndPassword,onAuthStateChanged  } from "firebase/auth";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -18,10 +19,40 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+const firebaseApp = initializeApp(firebaseConfig);
 // const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
-const analytics = getAnalytics(app);
+const analytics = getAnalytics(firebaseApp);
 
-export { getAuth, provider, signInWithPopup,createUserWithEmailAndPassword, signInWithEmailAndPassword,onAuthStateChanged  };
+const db = getFirestore(firebaseApp);
+
+// Create a new lobby
+const createLobby = async (lobbyId, player) => {
+  const lobbyRef = doc(db, 'lobbies', lobbyId);
+  await setDoc(lobbyRef, {
+    playerA: { uid: player.uid, email: player.email, wpm: 0, typedText: '' },
+    playerB: null,
+    text: 'Shared text for both players...',
+    countdown: 3,
+    gameStarted: false,
+    gameEnded: false,
+  });
+};
+
+// Join a lobby
+const joinLobby = async (lobbyId, player) => {
+  const lobbyRef = doc(db, 'lobbies', lobbyId);
+  const lobbyDoc = await getDoc(lobbyRef);
+
+  if (lobbyDoc.exists() && !lobbyDoc.data().playerB) {
+    await updateDoc(lobbyRef, {
+      playerB: { uid: player.uid, email: player.email, wpm: 0, typedText: '' },
+    });
+  } else {
+    console.log('Lobby is full or does not exist');
+  }
+};
+
+
+export {firebaseApp,db,createLobby,joinLobby, getAuth, provider, signInWithPopup,createUserWithEmailAndPassword, signInWithEmailAndPassword,onAuthStateChanged  };
 

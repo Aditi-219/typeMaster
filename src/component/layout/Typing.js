@@ -745,9 +745,16 @@ const TypingArea = () => {
               </h5>
             </div>
             {isLoggedIn && (
+              <>
+              <Link to="/multiplayer" className="play-button">
+               🎮 Play Multiplayer Game
+              </Link>
+
+
               <Link to="/game" className="play-button">
                🎮 Play Typing Shooter
               </Link>
+              </>
             )}
 
             <button
@@ -757,6 +764,7 @@ const TypingArea = () => {
               Logout
             </button>
           </div>
+          
         )}
       </div>
       {showFocusButton && (
