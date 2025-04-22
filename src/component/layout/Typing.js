@@ -154,6 +154,8 @@ const TypingArea = () => {
   const chartRef = useRef(null);
   const chartInstance = useRef(null);
   const typingContainerRef = useRef(null);
+  const [showThemeOptions, setShowThemeOptions] = useState(false);
+
 
   useEffect(() => {
     const typingContainer = typingContainerRef.current;
@@ -751,9 +753,31 @@ const TypingArea = () => {
               </Link>
 
 
-              <Link to="/game" className="play-button">
+              <div className="theme-selector">
+                <button
+                  onClick={() => setShowThemeOptions(prev => !prev)}
+                  className="play-button"
+                >
+                  🎮 Play Typing Shooter
+                </button>
+
+                {showThemeOptions && (
+                  <div className="theme-options">
+                    <Link to="/game" className="theme-button cosmic">
+                      🚀 Cosmic Typer
+                    </Link>
+                    <Link to="/jungle" className="theme-button jungle">
+                      🌿 Jungle Typer
+                    </Link>
+                  </div>
+                )}
+              </div>
+
+
+
+              {/* <Link to="/game" className="play-button">
                🎮 Play Typing Shooter
-              </Link>
+              </Link> */}
               </>
             )}
 

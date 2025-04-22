@@ -7,6 +7,7 @@ import './index.css';
 
 import TypingArea from "./component/TypingArea";
 import GamingArea from "./component/GamingArea";
+import JungleArea from "./component/JungleArea";
 import Multiplayer from './component/Multiplayer';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -17,6 +18,11 @@ root.render(
       <Route
           path="/game"
           element={ <GamingArea />
+          }
+        ></Route>
+        <Route
+          path="/jungle"
+          element={ <JungleArea />
           }
         ></Route>
         <Route path="/multiplayer" element={<Multiplayer/>}></Route>

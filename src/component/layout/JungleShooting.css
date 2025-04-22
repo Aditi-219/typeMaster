@@ -1,0 +1,317 @@
+
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;700&display=swap');
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  .jungle-game-root {
+    font-family: 'Rajdhani', sans-serif;
+    color: #e6f1ff; /* Light text color for readability */
+    overflow: auto;
+    height: 100vh;
+    position : relative;
+    background-color: #1e2a27; /* Dark forest background */
+  }
+
+  .jungle-game-container {
+    position: relative;
+    z-index: 1;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    overflow: hidden;
+  }
+
+  .jungle-video-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+    opacity: 0.6;
+  }
+
+  .jungle-game-root .jungle-header {
+    width: 100%;
+    max-width: 800px;
+    text-align: center;
+    padding: 1rem;
+    z-index: 10;
+  }
+
+  .jungle-title {
+    font-size: 2.5rem;
+    font-family: 'Orbitron', sans-serif;
+    margin-bottom: 1rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #b2c2b2; /* Pale green for the title */
+  }
+
+  .jungle-stats {
+    display: flex;
+    justify-content: space-around;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .jungle-game-root .stat {
+    background: rgba(34, 41, 39, 0.7); /* Deep greenish background */
+    border-radius: 10px;
+    padding: 0.8rem 1.2rem;
+    min-width: 120px;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(0, 219, 222, 0.3);
+  }
+
+  .jungle-game-root .stat span:first-child {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    display: block;
+    margin-bottom: 0.3rem;
+  }
+
+  .jungle-game-root .stat span:last-child {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #f1b56f; /* Goldish accent for stats */
+  }
+
+  .jungle-game-root .level-meter {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .jungle-game-root .level-number {
+    font-size: 1.5rem;
+    font-weight: bold;
+    min-width: 30px;
+    color: #f1b56f;
+  }
+
+  .jungle-game-root .level-bar {
+    flex-grow: 1;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .jungle-game-root .level-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+    background-color: #74b74b; /* Fresh green for the level bar */
+  }
+
+  .jungle-game-root .game-arena {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    height: 60vh;
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 1rem 0;
+    border: 1px solid rgba(0, 219, 222, 0.2);
+    box-shadow: 
+      inset 0 0 30px rgba(0, 219, 222, 0.1),
+      0 0 30px rgba(0, 219, 222, 0.1);
+    background: rgba(34, 41, 39, 0.4); /* Semi-transparent forest green */
+  }
+
+  .jungle-game-root .spaceship {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+  }
+
+  .jungle-game-root .ship-core {
+    font-size: 3rem;
+    filter: drop-shadow(0 0 10px rgba(0, 219, 222, 0.7));
+    position: relative;
+    z-index: 2;
+    color: #b2c2b2;
+  }
+
+  .jungle-game-root .engine-exhaust {
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 15px;
+    background: linear-gradient(to top, #a3e64d, #3d9c1b); /* Greenish engine exhaust */
+    border-radius: 0 0 10px 10px;
+    filter: blur(5px);
+    animation: engine-pulse 0.3s infinite alternate;
+  }
+
+  @keyframes engine-pulse {
+    0% { 
+      transform: translateX(-50%) scaleY(0.8);
+      opacity: 0.7;
+    }
+    100% { 
+      transform: translateX(-50%) scaleY(1.2);
+      opacity: 1;
+    }
+  }
+
+  .jungle-game-root .alien {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transform: translate(-50%, -50%);
+    z-index: 5;
+    transition: top 0.1s linear;
+  }
+
+  .jungle-game-root .alien-label {
+    background: rgba(26, 26, 46, 0.9);
+    color: #d9d9d9;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    border: 1px solid currentColor;
+    box-shadow: 0 0 10px currentColor;
+    text-transform: uppercase;
+  }
+
+  .jungle-game-root .alien-char {
+    font-size: 2rem;
+    position: relative;
+    z-index: 2;
+    animation: float 3s infinite ease-in-out;
+    filter: drop-shadow(0 0 5px currentColor);
+  }
+
+  .jungle-game-root .alien-aura {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    opacity: 0.3;
+    filter: blur(15px);
+    background: rgba(116, 183, 75, 0.4); /* Green aura for aliens */
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .jungle-game-root .input-container {
+    width: 100%;
+    max-width: 500px;
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 10;
+  }
+
+  .jungle-game-root .input-container input {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.2rem;
+    background: rgba(34, 41, 39, 0.7); /* Dark background for inputs */
+    color: #e6f1ff;
+    border-radius: 8px;
+    outline: none;
+    text-align: center;
+    text-transform: uppercase;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: bold;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+  }
+
+  .jungle-game-root .input-container input:focus {
+    box-shadow: 0 0 20px #a3e64d; /* Light green glow on focus */
+  }
+
+  .jungle-game-root .game-over {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(11, 10, 26, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    backdrop-filter: blur(5px);
+  }
+
+  .jungle-game-root .game-over-content {
+    background: rgba(34, 41, 39, 0.9);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    max-width: 500px;
+    width: 90%;
+    border: 1px solid #a3e64d;
+    box-shadow: 0 0 30px rgba(163, 230, 77, 0.2); /* Light green shadow */
+  }
+
+  .jungle-game-root .game-over-content h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    font-family: 'Orbitron', sans-serif;
+    text-shadow: 0 0 10px currentColor;
+    color: #f1b56f; /* Goldish color for the heading */
+  }
+
+  .jungle-game-root .final-stats {
+    margin-bottom: 2rem;
+  }
+
+  .jungle-game-root .final-stats p {
+    font-size: 1.2rem;
+    margin: 0.5rem 0;
+  }
+
+  .jungle-game-root .final-stats span {
+    color: #a3e64d; /* Light green for final stats */
+    font-weight: bold;
+  }
+
+  .jungle-game-root .restart-btn {
+    border: none;
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: bold;
+    color: white;
+    background: #3d9c1b; /* Dark green for restart button */
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: 'Rajdhani', sans-serif;
+    margin-top: 1rem;
+  }
+
+  .jungle-game-root .restart-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(163, 230, 77, 0.5); /* Light green on hover */
+  }
+
