@@ -17,6 +17,14 @@ const MultiplayerPage = () => {
   const [typedTextB, setTypedTextB] = useState(''); 
   const [lobbyError, setLobbyError] = useState(null); 
   const [isLobbyValid, setIsLobbyValid] = useState(false); 
+  const [lobbyInput, setLobbyInput] = useState('');
+  const [shouldJoinLobby, setShouldJoinLobby] = useState(false);
+  const [gameTime] = useState(60); // default timer (60 seconds)
+  const [timeLeft, setTimeLeft] = useState(60);
+  const [gameEnded, setGameEnded] = useState(false);
+
+
+
   const auth = getAuth();
 
   // Sample text for typing
@@ -117,18 +125,25 @@ const MultiplayerPage = () => {
     }
   };
 
+  useEffect(() => {
+    if (shouldJoinLobby && lobbyId.length >= 6) {
+      joinLobby();
+      setShouldJoinLobby(false); // reset flag
+    }
+  }, [shouldJoinLobby, lobbyId]);
   
+
+
+
   const generateLobbyId = () => {
     return Math.random().toString(36).substring(2, 8); 
   };
 
-  // Start the game
   const startGame = async () => {
     const lobbyRef = doc(db, 'lobbies', lobbyId);
     await updateDoc(lobbyRef, { gameStarted: true, countdownStart: serverTimestamp() });
     setGameStarted(true);
-
-    
+  
     let countdownValue = 3;
     const countdownInterval = setInterval(() => {
       if (countdownValue > 0) {
@@ -137,10 +152,57 @@ const MultiplayerPage = () => {
       } else {
         clearInterval(countdownInterval);
         setCountdown(0);
-        
+        setTimeLeft(gameTime); // Set the initial time to start
       }
     }, 1000);
   };
+  
+  useEffect(() => {
+    if (!gameStarted || timeLeft <= 0) return;
+  
+    const timer = setInterval(() => {
+      setTimeLeft((prevTime) => {
+        if (prevTime <= 1) {
+          clearInterval(timer);
+          setGameEnded(true);
+          setGameStarted(false);
+          updateDoc(doc(db, 'lobbies', lobbyId), { gameEnded: true });
+          return 0;
+        }
+        return prevTime - 1;
+      });
+    }, 1000);
+  
+    return () => clearInterval(timer);
+  }, [gameStarted, timeLeft]);
+  
+
+  const handleTypingA = (e) => {
+    if (!gameStarted) return;
+  
+    e.preventDefault();
+    const key = e.key;
+  
+    if (key.length === 1 && key.match(/^[a-zA-Z0-9 .,!?'"-]$/)) {
+      setTypedTextA((prev) => prev + key);
+    } else if (key === 'Backspace') {
+      setTypedTextA((prev) => prev.slice(0, -1));
+    }
+  };
+  
+  const handleTypingB = (e) => {
+    if (!gameStarted) return;
+  
+    e.preventDefault();
+    const key = e.key;
+  
+    if (key.length === 1 && key.match(/^[a-zA-Z0-9 .,!?'"-]$/)) {
+      setTypedTextB((prev) => prev + key);
+    } else if (key === 'Backspace') {
+      setTypedTextB((prev) => prev.slice(0, -1));
+    }
+  };
+  
 
   return (
     <div className='multiplayer-page-container'>
@@ -157,20 +219,29 @@ const MultiplayerPage = () => {
             <div className='lobby-buttons'>
               <button onClick={createLobby} className='button'>Create Lobby</button>
               <div className='join-lobby'>
-                <input
-                  type="text"
-                  placeholder="Enter Lobby ID"
-                  value={lobbyId}
-                  onChange={(e) => setLobbyId(e.target.value)}
-                  className='input-lobby'
-                />
-                <button
-                  onClick={joinLobby}
-                  className='button'
-                  disabled={!lobbyId || lobbyId.length < 6} 
-                >
-                  Join Lobby
-                </button>
+             
+              <input
+                type="text"
+                placeholder="Enter Lobby ID"
+                value={lobbyInput}
+                onChange={(e) => setLobbyInput(e.target.value)}
+                className='input-lobby'
+              />
+
+              <button
+                onClick={() => {
+                  setLobbyId(lobbyInput);
+                  //joinLobby();
+                  setShouldJoinLobby(true);
+                }}
+                className='button'
+                disabled={!lobbyInput || lobbyInput.length < 6}
+              >
+                Join Lobby
+              </button>
+
+
+
               </div>
               {lobbyError && <p className='error-message'>{lobbyError}</p>} {/* Show error if any */}
             </div>
@@ -189,33 +260,73 @@ const MultiplayerPage = () => {
               )}
               {gameStarted ? (
                 <div className='game-area'>
-                  <div className='player'>
-                    <h3>Player A</h3>
-                    <textarea
-                      value={typedTextA}
-                      onChange={(e) => setTypedTextA(e.target.value)}
-                      placeholder="Start typing..."
-                      className='textarea'
-                    />
-                  </div>
+                  <div className="game-info">
+                      <h3>Time Left: {timeLeft} seconds</h3>
+                    </div>
 
-                  <div className='player'>
-                    <h3>Player B</h3>
-                    <textarea
-                      value={typedTextB}
-                      onChange={(e) => setTypedTextB(e.target.value)}
-                      placeholder="Start typing..."
-                      className='textarea'
-                    />
-                  </div>
+                  {/* Show Player A's input if current user is Player A */}
+                  {playerA?.uid === user?.uid && (
+                    <div className='player'>
+                      <h3>Player A</h3>
+                      <div className="typing-container" tabIndex={0} onKeyDown={handleTypingA}>
+                        {text.split('').map((char, index) => {
+                          const typedChar = typedTextA[index];
+                          let className = '';
+                          if (typedChar == null) {
+                            className = index === typedTextA.length ? 'current' : 'pending';
+                          } else if (typedChar === char) {
+                            className = 'correct';
+                          } else {
+                            className = 'incorrect';
+                          }
+                          return (
+                            <span key={index} className={className}>
+                              {char}
+                            </span>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
 
-                  <div className='game-text'>
-                    <p>{text}</p>
-                  </div>
+                  {/* Show Player B's input if current user is Player B */}
+                  {playerB?.uid === user?.uid && (
+                    <div className='player'>
+                      <h3>Player B</h3>
+                      <div className="typing-container" tabIndex={0} onKeyDown={handleTypingB}>
+                        {text.split('').map((char, index) => {
+                          const typedChar = typedTextB[index];
+                          let className = '';
+                          if (typedChar == null) {
+                            className = index === typedTextB.length ? 'current' : 'pending';
+                          } else if (typedChar === char) {
+                            className = 'correct';
+                          } else {
+                            className = 'incorrect';
+                          }
+                          return (
+                            <span key={index} className={className}>
+                              {char}
+                            </span>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <button onClick={startGame} className='button'>Start Game</button>
               )}
+
+                {gameEnded && (
+                  <div className="game-ended">
+                    <h2>Game Over ⏰</h2>
+                    <p>Thank you for playing!</p>
+                  </div>
+                )}
+
+
+
             </div>
           )}
         </div>

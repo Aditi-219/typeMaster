@@ -1,8 +1,8 @@
 .multiplayer-container {
-    max-width: 500px;
+    max-width: 1000px;
     margin: 4rem auto;
     padding: 2rem;
-    background-color:rgb(72, 35, 103);
+    background-color:rgb(0,0,0,0.6);
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     text-align: center;
@@ -80,9 +80,65 @@
     border: 1px solid #ccc;
   }
 
-  .player:nth-child(odd) {
+  /* .player:nth-child(odd) {
     background-color: #f0f0ff;
     padding: 1rem;
     border-radius: 8px;
+  } */
+
+  .typing-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-width: vh; /* You might want to tweak this if it causes overflow */
+    background-color: #1c1c1c;
+    color: #ccc;
+    font-size: 28px;
+    line-height: 1.5;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    outline: none;
+    padding: 30px;
+    cursor: text;
+    caret-color: transparent;
+    overflow: hidden;   
+    box-sizing: border-box;  
   }
+  
+  
+  .typing-container span {
+    white-space: pre;
+  }
+  
+  .typing-container span.correct {
+    color: #4caf50;
+  }
+  
+  .typing-container span.incorrect {
+    color: #f44336;
+  }
+  
+  .typing-container span.pending {
+    color: #aaa;
+  }
+  
+  .typing-container span.current {
+    border-bottom: 2px solid #2196f3;
+    background-color: #d0f0ff;
+  }
+
+  .game-info {
+    margin: 1rem 0;
+    font-size: 1.2rem;
+    color: #fff;
+  }
+  
+  .game-ended {
+    margin-top: 2rem;
+    font-size: 1.5rem;
+    color: #ff4d4d;
+    text-align: center;
+  }
+  
   
