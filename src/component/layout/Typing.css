@@ -3,7 +3,7 @@
   justify-content: center;
   align-items: center;
   height: vh;
-  width: 100%;
+  width: 100vh;
   min-width: 100vh;
   display: flex;
   align-items: flex-start;
@@ -150,7 +150,7 @@ html, body {
 }
 .timer-options, .word-options {
   display: flex; 
-  gap: 10px; 
+  /* gap: 10px;  */
 }
 
 .options {
@@ -179,8 +179,13 @@ html, body {
   flex-direction: column;
 }
 .word-options{
-  padding-left: 3%;
-  padding-right: 3%;
+  background: #151410; 
+  border-radius: 10px;
+  width: 90%;
+  padding: 5rem;
+  margin-top: 23px;
+  padding-top: 5px;
+  padding-bottom: 4px;
 }
 .login-container {
   position: absolute;
@@ -572,4 +577,163 @@ background: #45a049;
   position: absolute;
   top: 20px;
   right: 20px;
+}
+
+/* Horizontal User Panel */
+.horizontal-user-panel {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  /* background: rgba(42, 42, 42, 0.95); */
+  /* border-radius: 30px; */
+  padding: 6px 15px 6px 10px;
+  /* border: 1px solid #3a3a3a; */
+  /* box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3); */
+  font-family: 'Courier New', monospace;
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  z-index: 1000;
+}
+
+/* Keep all other CSS the same as previous horizontal version */
+.user-info-horizontal {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.username-horizontal {
+  color: white;
+  font-size: 1.2rem;
+  white-space: nowrap;
+}
+
+.game-actions-horizontal {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+}
+
+.game-button-horizontal {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 20px;
+  background: #1c1c1c;
+  border: none;
+  color: white;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.game-button-horizontal:hover {
+  background: #3a3a3a;
+}
+
+.icon-horizontal {
+  font-size: 1.1rem
+}
+
+.dropdown-container {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: #333;
+  border-radius: 8px;
+  padding: 8px 0;
+  margin-top: 5px;
+  min-width: 140px;
+  z-index: 1100; /* Increased z-index */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  display: block !important; /* Force display */
+  opacity: 1 !important; /* Force visibility */
+  transform: none !important; /* Remove any transforms */
+}
+
+.dropdown-item {
+  display: block;
+  padding: 8px 15px;
+  color: white;
+  text-decoration: none;
+  font-size: 13px;
+  transition: background 0.2s;
+}
+
+.dropdown-item:hover {
+  background: #3a3a3a;
+}
+
+/* Add this animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Add click catcher for closing dropdown when clicking outside */
+.dropdown-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  display: none;
+}
+
+.dropdown-container.active .dropdown-overlay {
+  display: block;
+}
+.dropdown-arrow {
+  font-size: 10px;
+  margin-left: 4px;
+}
+
+.dropdown-item {
+  display: block;
+  padding: 8px 15px;
+  color: white;
+  text-decoration: none;
+  font-size: 13px;
+  transition: background 0.2s;
+}
+
+.dropdown-item:hover {
+  background: #3a3a3a;
+}
+
+.cosmic {
+  color: #4fc3f7;
+}
+
+.jungle {
+  color: #81c784;
+}
+
+.logout-button-horizontal {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  /* border-radius: 20px; */
+  background: #1c1c1c;;
+  border: none;
+  color: #ff6b6b;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.logout-button-horizontal:hover {
+  background: #3a3a3a;
 }

@@ -1,11 +1,21 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./Typing.css";
-import { Chart } from 'chart.js/auto';
-import { getAuth, provider, signInWithPopup,createUserWithEmailAndPassword, signInWithEmailAndPassword,onAuthStateChanged  } from './firebase';
-import { Link } from 'react-router-dom';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-
-
+import { Chart } from "chart.js/auto";
+import {
+  getAuth,
+  provider,
+  signInWithPopup,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+} from "./firebase";
+import { Link } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 
 const TypingArea = () => {
   // Array of predefined paragraphs
@@ -82,7 +92,11 @@ const TypingArea = () => {
   const handleEmailSignup = async (e) => {
     e.preventDefault();
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       setUser(userCredential.user);
       setIsLoggedIn(true);
       setShowLogin(false); // Close the login popup
@@ -96,7 +110,11 @@ const TypingArea = () => {
   const handleEmailLogin = async (e) => {
     e.preventDefault();
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       setUser(userCredential.user);
       setIsLoggedIn(true);
       setShowLogin(false); // Close the login popup
@@ -106,7 +124,6 @@ const TypingArea = () => {
     }
   };
 
- 
   const handleLogout = async () => {
     try {
       await auth.signOut();
@@ -127,13 +144,13 @@ const TypingArea = () => {
         setUser(null);
       }
     });
-    return () => unsubscribe(); 
+    return () => unsubscribe();
   }, []);
 
   const [showAuthButton, setShowAuthButton] = useState(true);
   const [showFocusButton, setShowFocusButton] = useState(true);
-  const [isBlurred, setIsBlurred] = useState(true); 
-  // const [showButton, setShowButton] = useState(true); 
+  const [isBlurred, setIsBlurred] = useState(true);
+  // const [showButton, setShowButton] = useState(true);
   const [text, setText] = useState("");
   const [typedText, setTypedText] = useState("");
   const [started, setStarted] = useState(false);
@@ -156,7 +173,6 @@ const TypingArea = () => {
   const typingContainerRef = useRef(null);
   const [showThemeOptions, setShowThemeOptions] = useState(false);
 
-
   useEffect(() => {
     const typingContainer = typingContainerRef.current;
     if (isBlurred) {
@@ -172,7 +188,6 @@ const TypingArea = () => {
     // setShowFocusButton(isBlurred);
   }, [isBlurred]);
 
-
   useEffect(() => {
     const typingContainer = typingContainerRef.current;
 
@@ -185,7 +200,7 @@ const TypingArea = () => {
       typingContainer?.removeEventListener("focus", handleFocus, true);
     };
   }, []);
-  
+
   const handleFocusClick = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -198,24 +213,23 @@ const TypingArea = () => {
 
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.code === 'Space') {
+      if (e.code === "Space") {
         e.preventDefault();
       }
     };
-    document.addEventListener('keydown', handleKeyDown, { passive: false });
-  
+    document.addEventListener("keydown", handleKeyDown, { passive: false });
+
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
-  
 
   useEffect(() => {
     const randomParagraph =
       wordsPunctuationNumberList[
         Math.floor(Math.random() * wordsPunctuationNumberList.length)
       ];
-      
+
     // setTimeout(() => {
     //   container.classList.remove('blurred');
     // }, 1500);
@@ -635,6 +649,22 @@ const TypingArea = () => {
     });
   };
 
+  const dropdownRef = useRef(null);
+
+  // Handle clicks outside dropdown
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowThemeOptions(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
     <div className="container">
       <div className="auth-container">
@@ -737,59 +767,74 @@ const TypingArea = () => {
             </div>
           </div>
         )}
-
-        {isLoggedIn && user && (
-          <div className="user-panel">
-            <div className="user-greeting">
-              <h5>👋 
-                Welcome,{" "}
-                <strong>{user.displayName || user.email.split("@")[0]}</strong>
-              </h5>
-            </div>
-            {isLoggedIn && (
-              <>
-              <Link to="/multiplayer" className="play-button">
-               🎮 Play Multiplayer Game
-              </Link>
-
-
-              <div className="theme-selector">
-                <button
-                  onClick={() => setShowThemeOptions(prev => !prev)}
-                  className="play-button"
-                >
-                  🎮 Play Typing Shooter
-                </button>
-
-                {showThemeOptions && (
-                  <div className="theme-options">
-                    <Link to="/game" className="theme-button cosmic">
-                      🚀 Cosmic Typer
-                    </Link>
-                    <Link to="/jungle" className="theme-button jungle">
-                      🌿 Jungle Typer
-                    </Link>
-                  </div>
-                )}
-              </div>
-
-
-
-              {/* <Link to="/game" className="play-button">
-               🎮 Play Typing Shooter
-              </Link> */}
-              </>
-            )}
-
-            <button
-              onClick={() => auth.signOut().then(() => setIsLoggedIn(false))}
-              className="auth-button logout"
-            >
-              Logout
-            </button>
-          </div>
-          
+        {/* 
+{isLoggedIn && user && (
+  <div className="horizontal-user-panel" style={{ position: 'absolute', top: '10px', right: '20px', zIndex: 1000 }}>
+    <div className="user-info-horizontal">
+      <div className="avatar-horizontal">
+        {user.photoURL ? (
+          <img src={user.photoURL} alt="User avatar" />
+        ) : (
+          <span>{user.displayName?.charAt(0) || user.email.charAt(0).toUpperCase()}</span>
         )}
+      </div>
+      <span className="username-horizontal">
+        {user.displayName || user.email.split("@")[0]}
+      </span>
+    </div>
+
+    <div className="game-actions-horizontal">
+      <Link to="/multiplayer" className="game-button-horizontal multiplayer">
+        <span className="icon-horizontal">🎮</span>
+        <span>Multiplayer</span>
+      </Link>
+
+      <div className="dropdown-container">
+        <button 
+          className="game-button-horizontal"
+          onClick={() => setShowThemeOptions(!showThemeOptions)}
+        >
+          <span className="icon-horizontal">🎯</span>
+          <span>Typing Shooters</span>
+          <span className="dropdown-arrow">{showThemeOptions ? '▲' : '▼'}</span>
+        </button>
+
+        {showThemeOptions && (
+          <div className="dropdown-menu">
+            <Link to="/game" className="dropdown-item cosmic">
+              <span>🚀 Cosmic</span>
+            </Link>
+            <Link to="/jungle" className="dropdown-item jungle">
+              <span>🌿 Jungle</span>
+            </Link>
+          </div>
+        )}
+      </div>
+    </div>
+
+    <button
+      onClick={() => auth.signOut().then(() => setIsLoggedIn(false))}
+      className="logout-button-horizontal"
+    >
+      <span className="logout-icon-horizontal">⎋</span>
+      <span>Sign Out</span>
+    </button>
+  </div>
+)} */}
+
+        <div className=" options timer-options word-options">
+          {["words", "punctuation", "numbers"].map((option) => (
+            <button
+              key={option}
+              onClick={() => handleOptionChange(option)}
+              className={selectedOptions.includes(option) ? "active" : ""}
+            >
+              {option === "words" && "Words"}
+              {option === "punctuation" && "Punctuation"}
+              {option === "numbers" && "Numbers"}
+            </button>
+          ))}
+        </div>
       </div>
       {showFocusButton && (
         <button onClick={handleFocusClick} className="focus-button">
@@ -812,7 +857,85 @@ const TypingArea = () => {
                 </button>
               ))}
             </div>
-            <div className=" options timer-options word-options">
+            {isLoggedIn && user && (
+              <div
+                className="horizontal-user-panel"
+                style={{
+                  position: "absolute",
+                  top: "15px",
+                  right: "20px",
+                  zIndex: 1000,
+                }}
+              >
+                <div className="user-info-horizontal">
+                  <span className="username-horizontal">
+                    Welcome {user.displayName || user.email.split("@")[0]}
+                  </span>
+                </div>
+
+                {/* Game actions section */}
+                <div className="game-actions-horizontal">
+                  <Link
+                    to="/multiplayer"
+                    className="game-button-horizontal multiplayer"
+                  >
+                    <span>🎮 Multiplayer</span>
+                  </Link>
+
+                  <div className="dropdown-container" ref={dropdownRef}>
+                    <button
+                      className="game-button-horizontal"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setShowThemeOptions(!showThemeOptions);
+                      }}
+                    >
+                      <span>{showThemeOptions ? "▲" : "▼"} Typing Shooters 🎯</span>
+                    </button>
+
+                    {showThemeOptions && (
+                      <div
+                        className="dropdown-menu"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <Link
+                          to="/game"
+                          className="dropdown-item cosmic"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setShowThemeOptions(false);
+                          }}
+                        >
+                          <span>🚀 Cosmic</span>
+                        </Link>
+                        <Link
+                          to="/jungle"
+                          className="dropdown-item jungle"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setShowThemeOptions(false);
+                          }}
+                        >
+                          <span>🌿 Jungle</span>
+                        </Link>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Logout button */}
+                <button
+                  onClick={() =>
+                    auth.signOut().then(() => setIsLoggedIn(false))
+                  }
+                  className="logout-button-horizontal"
+                >
+                  <span>⎋ Sign Out</span>
+                </button>
+              </div>
+            )}{" "}
+            {/* <div className=" options timer-options word-options">
               {["words", "punctuation", "numbers"].map((option) => (
                 <button
                   key={option}
@@ -824,7 +947,7 @@ const TypingArea = () => {
                   {option === "numbers" && "Numbers"}
                 </button>
               ))}
-            </div>
+            </div> */}
           </div>
 
           <div className="timer-display">
@@ -836,10 +959,10 @@ const TypingArea = () => {
           <div className="additional-stats">
             <div>⚡ {wpm} WPM</div>
             <div>🎯 {accuracy}% Accuracy</div>
-          </div>   
+          </div>
         </div>
       </div>
-      
+
       {!showResults ? (
         <div
           className="typing-container"

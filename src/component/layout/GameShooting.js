@@ -3,22 +3,18 @@ import './GameShooting.css';
 
 // Word list remains the same
 const wordsList = [
-  "alien", "orbit", "comet", "lunar", "solar", "phase", "quark", "flare", 
-  "probe", "rover", "laser", "drone", "robot", "pixel", "modem", "cache",
-  "asteroid", "velocity", "nebula", "galaxy", "eclipse", "satellite",
-  "spacecraft", "astronaut", "universe", "quantum", "gravity", "plasma",
-  "code", "bug", "app", "web", "data", "loop", "html", "css", "java", "python",
-  "ruby", "swift", "linux", "mysql", "query", "stack", "queue", "logic",
-  "debug", "virus", "cloud", "agile", "spark", "input", "output", "server",
-  "client", "syntax", "error", "compile", "binary", "script", "object",
-  "function", "variable", "compiler", "algorithm", "framework", "terminal",
-  "metadata", "network", "digital", "analog", "kernel", "driver", "plugin",
-  "banana", "pizza", "llama", "robot", "ninja", "zombie", "pirate", "wizard",
-  "unicorn", "dinosaur", "spaghetti", "chocolate", "hamburger", "watermelon",
-  "rainbow", "rocket", "turtle", "dragon", "monster", "ghost", "knight",
-  "launch", "crash", "blast", "click", "press", "enter", "delete", "escape",
-  "return", "shift", "control", "command", "scroll", "toggle", "update",
-  "upload", "download", "install", "unzip", "format", "reboot", "shutdown"
+  "vex", "zap", "flux", "nano", "quant", "ion", "pix", "glow", "hack", "wire", "chip", "node", "grid", "loop", "pulse", "wave", "link", "meld", "sync", "glitch",
+  "moon", "star", "sun", "earth", "mars", "venus", "jupiter", "saturn", "uranus", "neptune", "pluto", "ceres", "comet", "meteor", "asteroid", "nebula", "galaxy", 
+  "quasar", "pulsar", "blackhole", "wormhole", "supernova", "cosmos", "void", "flare", "halo", "crater", "ring", "belt", "cloud", "rocket", "probe", "rover",
+  "satellite", "lander", "module", "capsule", "thruster", "booster", "payload", "launch", "orbit", "reentry", "spacewalk", "dock", "mission", "voyager", "lander",
+  "ion", "warp", "jump", "gate", "shield", "sensor", "antenna", "beacon", "transit", "thrust", "vector", "delta-v", "alien", "ufo", "et", "grays", "nordic",
+  "reptoid", "hybrid", "abduct", "probe", "mothership", "saucer", "crash", "coverup", "artifact", "ancient", "visitor", "invader", "colonist", "observer", "entity",
+  "specimen", "autopsy", "signal", "contact", "message", "warning", "harvest", "hybrid", "cloak", "scan", "phaser", "stun", "beam", "teleport", "tractor", "shield",
+  "cloak", "hologram", "android", "cyborg", "AI", "drone", "nanobot", "stasis", "cryo", "FTL", "warp", "jump", "gate", "dimension", "tesseract", "singularity",
+  "quantum", "plasma", "ion", "flux", "darkmatter", "antimatter", "gravity", "tachyon", "zero-g", "vacuum", "cosmic", "stellar", "lunar", "solar", "phase", "axis",
+  "core", "dust", "gas", "ion", "flux", "field", "pulse", "burst", "flare", "wave", "rift", "anomaly", "extraterrestrial", "interstellar", "astronaut", "cosmonaut",
+  "constellation", "spaceshuttle", "lightspeed", "parsec", "telepathy", "exoplanet", "wormhole", "eventhorizon", "singularity", "hypersleep", "cryostasis","zog",
+  "vril", "xyr", "nyx", "qis", "mork", "vox", "zenn", "kyx", "jynx", "zyl", "wryn", "quor", "drax", "vork", "plix", "zurk", "glim", "snor", "flur"
 ];
 
 const alienTypes = ['👽', '👾', '🤖', '🛸', '👹', '👺'];
@@ -329,12 +325,7 @@ useEffect(() => {
       </div> */}
 
     <audio
-      id="bg-audio"
-      src="/Spacebg_sound.mp3"
-      autoPlay
-      loop
-      preload="auto"
-    />
+      id="bg-audio"src="/Spacebg_sound.mp3" autoPlay loop preload="auto" />
 
       {/* Game header */}
       <div className="game-header">

@@ -10,14 +10,14 @@
   }
   
   .header-container i {
-    font-size: 28px;
-    color: #00B4D8;
-    margin-right: 30px; 
+    font-size: 38px;
+    color: #ff9800;
+    margin-right: 10px; 
   }
   .logo {
-    font-size: 28px;
+    font-size: 38px;
     font-weight: bold;
-    color: #00B4D8;
+    color: #ff9800;
     letter-spacing: 1.5px;
     margin: 0; 
   }
@@ -67,6 +67,6 @@
 }
 
 .timer-options button.active {
-  color: #ffcc00; 
+  color: #ff9800; 
   font-weight: bold;
 }
