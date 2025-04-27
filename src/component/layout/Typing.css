@@ -3,8 +3,6 @@
   justify-content: center;
   align-items: center;
   height: vh;
-  width: 100vh;
-  min-width: 100vh;
   display: flex;
   align-items: flex-start;
   background-color: #1c1c1c;
@@ -20,6 +18,10 @@
   overflow: hidden;   
   box-sizing: border-box;  
   outline: none;
+  width: 90vw;
+max-width: 1200px;
+margin: 30px auto;
+
 }
 
 .text {
@@ -29,7 +31,9 @@
   white-space: pre-wrap;
   word-spacing: 8px;     
   letter-spacing: 0.5px;  
-  transition: filter 0.3s ease;  
+  transition: filter 0.3s ease; 
+  word-wrap: break-word;
+   
 }
 
 .typing-container.blurred {

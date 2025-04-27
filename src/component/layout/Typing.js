@@ -62,9 +62,7 @@ const TypingArea = () => {
     "The test started promptly at 9:00 AM, and we were given 2 hours to complete it. The exam consisted of 50 multiple-choice questions, 10 short-answer questions, and 3 essay questions. I decided to start with the multiple-choice section, finishing it in 30 minutes. By 10:30 AM, I had completed all the short-answer questions and moved on to the essays. I spent the remaining time carefully crafting my responses, ensuring I answered everything thoroughly. At 11:55 AM, I submitted my paper, feeling confident that I had done my best and was ready to relax after such an intense test.",
   ];
 
-  // const [isLoggedIn, setIsLoggedIn] = useState(false);
-  // const [user, setUser] = useState(null);
-  // const [showLogin, setShowLogin] = useState(false);
+
 
   const handleLogin = async () => {
     try {
@@ -262,22 +260,7 @@ const TypingArea = () => {
     }
   }, [time]);
 
-  // const calculateStats = () => {
-  //   const typedWords = typedText.trim().split(/\s+/).length;
-  //   const wpmValue = Math.floor(typedWords / (time / 60));
-
-  //   let correctCount = 0;
-  //   for (let i = 0; i < Math.min(typedText.length, text.length); i++) {
-  //     if (typedText[i] === text[i]) {
-  //       correctCount++;
-  //     }
-  //   }
-
-  //   const accuracyValue = Math.floor((correctCount / typedText.length) * 100);
-
-  //   setWpm(wpmValue);
-  //   setAccuracy(accuracyValue);
-  // };
+  
 
   const calculateStats = () => {
     const typedWords = typedText.trim().split(/\s+/).length;
@@ -298,7 +281,7 @@ const TypingArea = () => {
     setWpm(wpmValue);
     setAccuracy(accuracyValue);
 
-    // ✅ Only update history if time is still running
+    // Only update history if time is still running
     if (timerActive && time < selectedTime) {
       setWpmHistory(
         (prev) =>
@@ -368,8 +351,7 @@ const TypingArea = () => {
       chartInstance.current = new Chart(ctx, {
         type: "line",
         data: {
-          // labels: Array.from({length: wpmHistory.length}, (_, i) => i + 1),
-          // labels : wpmHistory.map((_, index) => index + 1), // 1, 2, 3, ..., up to selectedTime
+          
           labels: Array.from({ length: selectedTime }, (_, i) => i + 1), // 1, 2, ..., selectedTime
 
           datasets: [
@@ -767,60 +749,7 @@ const TypingArea = () => {
             </div>
           </div>
         )}
-        {/* 
-{isLoggedIn && user && (
-  <div className="horizontal-user-panel" style={{ position: 'absolute', top: '10px', right: '20px', zIndex: 1000 }}>
-    <div className="user-info-horizontal">
-      <div className="avatar-horizontal">
-        {user.photoURL ? (
-          <img src={user.photoURL} alt="User avatar" />
-        ) : (
-          <span>{user.displayName?.charAt(0) || user.email.charAt(0).toUpperCase()}</span>
-        )}
-      </div>
-      <span className="username-horizontal">
-        {user.displayName || user.email.split("@")[0]}
-      </span>
-    </div>
 
-    <div className="game-actions-horizontal">
-      <Link to="/multiplayer" className="game-button-horizontal multiplayer">
-        <span className="icon-horizontal">🎮</span>
-        <span>Multiplayer</span>
-      </Link>
-
-      <div className="dropdown-container">
-        <button 
-          className="game-button-horizontal"
-          onClick={() => setShowThemeOptions(!showThemeOptions)}
-        >
-          <span className="icon-horizontal">🎯</span>
-          <span>Typing Shooters</span>
-          <span className="dropdown-arrow">{showThemeOptions ? '▲' : '▼'}</span>
-        </button>
-
-        {showThemeOptions && (
-          <div className="dropdown-menu">
-            <Link to="/game" className="dropdown-item cosmic">
-              <span>🚀 Cosmic</span>
-            </Link>
-            <Link to="/jungle" className="dropdown-item jungle">
-              <span>🌿 Jungle</span>
-            </Link>
-          </div>
-        )}
-      </div>
-    </div>
-
-    <button
-      onClick={() => auth.signOut().then(() => setIsLoggedIn(false))}
-      className="logout-button-horizontal"
-    >
-      <span className="logout-icon-horizontal">⎋</span>
-      <span>Sign Out</span>
-    </button>
-  </div>
-)} */}
 
         <div className=" options timer-options word-options">
           {["words", "punctuation", "numbers"].map((option) => (
@@ -935,19 +864,7 @@ const TypingArea = () => {
                 </button>
               </div>
             )}{" "}
-            {/* <div className=" options timer-options word-options">
-              {["words", "punctuation", "numbers"].map((option) => (
-                <button
-                  key={option}
-                  onClick={() => handleOptionChange(option)}
-                  className={selectedOptions.includes(option) ? "active" : ""}
-                >
-                  {option === "words" && "Words"}
-                  {option === "punctuation" && "Punctuation"}
-                  {option === "numbers" && "Numbers"}
-                </button>
-              ))}
-            </div> */}
+            
           </div>
 
           <div className="timer-display">
