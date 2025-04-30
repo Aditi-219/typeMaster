@@ -771,99 +771,86 @@ const TypingArea = () => {
         </button>
       )}
       <div className="header">
-        <h1 className="mt-4">Typing Test</h1>
-        <div className="stats">
-          <div className="options-container">
-            <div className="timer-options">
-              {[15, 30, 60, 120].map((time) => (
-                <button
-                  key={time}
-                  onClick={() => handleTimeChange(time)}
-                  className={selectedTime === time ? "active" : ""}
-                  disabled={timerActive}
-                >
-                  {time}s
-                </button>
-              ))}
+  <h1 className="mt-4 typingTest">Typing Test</h1>
+  <div className="stats">
+    <div className="options-container">
+      <div className="timer-options">
+        {[15, 30, 60, 120].map((time) => (
+          <button
+            key={time}
+            onClick={() => handleTimeChange(time)}
+            className={selectedTime === time ? "active" : ""}
+            disabled={timerActive}
+          >
+            {time}s
+          </button>
+        ))}
+      </div>
+      
+      {isLoggedIn && user && (
+        <div className="user-controls-container">
+          <div className="horizontal-user-panel">
+            <div className="user-info-horizontal">
+              <span className="username-horizontal">
+                Welcome { user.displayName || user.email.split("@")[0]}
+              </span>
             </div>
-            {isLoggedIn && user && (
-              <div
-                className="horizontal-user-panel"
-                style={{
-                  position: "absolute",
-                  top: "15px",
-                  right: "20px",
-                  zIndex: 1000,
-                }}
-              >
-                <div className="user-info-horizontal">
-                  <span className="username-horizontal">
-                    Welcome {user.displayName || user.email.split("@")[0]}
+
+            <div className="game-actions-horizontal">
+              <Link to="/multiplayer" className="game-button-horizontal multiplayer">
+                <span className="button-text">🎮 Multiplayer</span>
+              </Link>
+
+              <div className="dropdown-container" ref={dropdownRef}>
+                <button
+                  className="game-button-horizontal"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setShowThemeOptions(!showThemeOptions);
+                  }}
+                >
+                  <span className="button-text">
+                    {showThemeOptions ? "▲" : "▼"} Typing Shooters 🎯
                   </span>
-                </div>
+                </button>
 
-                {/* Game actions section */}
-                <div className="game-actions-horizontal">
-                  <Link
-                    to="/multiplayer"
-                    className="game-button-horizontal multiplayer"
-                  >
-                    <span>🎮 Multiplayer</span>
-                  </Link>
-
-                  <div className="dropdown-container" ref={dropdownRef}>
-                    <button
-                      className="game-button-horizontal"
+                {showThemeOptions && (
+                  <div className="dropdown-menu" onClick={(e) => e.stopPropagation()}>
+                    <Link
+                      to="/game"
+                      className="dropdown-item cosmic"
                       onClick={(e) => {
-                        e.preventDefault();
                         e.stopPropagation();
-                        setShowThemeOptions(!showThemeOptions);
+                        setShowThemeOptions(false);
                       }}
                     >
-                      <span>{showThemeOptions ? "▲" : "▼"} Typing Shooters 🎯</span>
-                    </button>
-
-                    {showThemeOptions && (
-                      <div
-                        className="dropdown-menu"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <Link
-                          to="/game"
-                          className="dropdown-item cosmic"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setShowThemeOptions(false);
-                          }}
-                        >
-                          <span>🚀 Cosmic</span>
-                        </Link>
-                        <Link
-                          to="/jungle"
-                          className="dropdown-item jungle"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setShowThemeOptions(false);
-                          }}
-                        >
-                          <span>🌿 Jungle</span>
-                        </Link>
-                      </div>
-                    )}
+                      <span>🚀 Cosmic</span>
+                    </Link>
+                    <Link
+                      to="/jungle"
+                      className="dropdown-item jungle"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setShowThemeOptions(false);
+                      }}
+                    >
+                      <span>🌿 Jungle</span>
+                    </Link>
                   </div>
-                </div>
-
-                {/* Logout button */}
-                <button
-                  onClick={() =>
-                    auth.signOut().then(() => setIsLoggedIn(false))
-                  }
-                  className="logout-button-horizontal"
-                >
-                  <span>⎋ Sign Out</span>
-                </button>
+                )}
               </div>
-            )}{" "}
+
+              <button
+                onClick={() => auth.signOut().then(() => setIsLoggedIn(false))}
+                className="logout-button-horizontal"
+              >
+                <span className="button-text">⎋ Sign Out</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}{" "}
             
           </div>
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef} from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { getAuth } from "firebase/auth";
 import { db } from "./firebase";
 import {
@@ -11,7 +11,7 @@ import {
 } from "firebase/firestore"; // Firestore methods
 import "./MultiplayerPage.css";
 
-import { Bar } from 'react-chartjs-2';
+import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -19,10 +19,9 @@ import {
   BarElement,
   Tooltip,
   Legend,
-} from 'chart.js';
+} from "chart.js";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
-
 
 const MultiplayerPage = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -39,16 +38,14 @@ const MultiplayerPage = () => {
   const [isLobbyValid, setIsLobbyValid] = useState(false);
   const [lobbyInput, setLobbyInput] = useState("");
   const [shouldJoinLobby, setShouldJoinLobby] = useState(false);
-  const [gameTime] = useState(60); // default timer (60 seconds)
-  const [timeLeft, setTimeLeft] = useState(60);
+  const [gameTime] = useState(25);
+  const [timeLeft, setTimeLeft] = useState(25);
   const [gameEnded, setGameEnded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const typingContainerARef = React.useRef(null);
   const typingContainerBRef = React.useRef(null);
   const auth = getAuth();
-
-
-  
+  const [showChart, setShowChart] = useState(false);
 
   // Sample text for typing
   const sampleText = "The quick brown fox jumped over the lazy dog.";
@@ -132,7 +129,7 @@ const MultiplayerPage = () => {
       typedText: "",
       wpm: 0,
     };
-    
+
     const lobbyRef = doc(db, "lobbies", newLobbyId);
     await setDoc(lobbyRef, {
       playerA: player,
@@ -180,8 +177,6 @@ const MultiplayerPage = () => {
       setLobbyError("Lobby not found. Please check the Lobby ID.");
     }
   };
-
-  
 
   useEffect(() => {
     if (shouldJoinLobby && lobbyId.length >= 6) {
@@ -314,7 +309,7 @@ const MultiplayerPage = () => {
       newTypedText = newTypedText.slice(0, -1);
     }
 
-     setTypedTextB(newTypedText);
+    setTypedTextB(newTypedText);
 
     // Update Firestore
     const lobbyRef = doc(db, "lobbies", lobbyId);
@@ -414,8 +409,7 @@ const MultiplayerPage = () => {
     }
   }, [gameStarted, countdown, playerA, playerB, user]);
 
-
-  const GameResultChart = ({ playerA, playerB, text }) => {
+  const GameResultChart = ({ playerA, playerB, text, onClose }) => {
     const calculateAccuracy = (typedText, originalText) => {
       if (!typedText || !originalText || originalText.length === 0) return 0;
       let correctChars = 0;
@@ -425,47 +419,59 @@ const MultiplayerPage = () => {
       }
       return Math.round((correctChars / originalText.length) * 100);
     };
-  
+
     const data = {
-      labels: ['WPM', 'Accuracy'],
+      labels: ["WPM", "Accuracy"],
       datasets: [
         {
-          label: playerA?.email || 'Player A',
+          label: playerA?.email || "Player A",
           data: [
             playerA?.wpm || 0,
-            calculateAccuracy(playerA?.typedText || '', text),
+            calculateAccuracy(playerA?.typedText || "", text),
           ],
-          backgroundColor: 'rgba(54, 162, 235, 0.7)',
+          backgroundColor: "rgba(54, 162, 235, 0.7)",
         },
         {
-          label: playerB?.email || 'Player B',
+          label: playerB?.email || "Player B",
           data: [
             playerB?.wpm || 0,
-            calculateAccuracy(playerB?.typedText || '', text),
+            calculateAccuracy(playerB?.typedText || "", text),
           ],
-          backgroundColor: 'rgba(255, 99, 132, 0.7)',
+          backgroundColor: "rgba(255, 99, 132, 0.7)",
         },
       ],
     };
-  
+
     const options = {
       responsive: true,
       plugins: {
         legend: {
-          position: 'top',
+          position: "top",
         },
       },
     };
-  
+
     return (
-      <div style={{ maxWidth: '600px', margin: 'auto', paddingTop: '20px' }}>
-        <Bar data={data} options={options} />
+      <div className="chart-modal">
+        <div className="chart-content">
+          <button
+            className="chart-close-btn"
+            onClick={(e) => {
+              e.stopPropagation();
+              onClose();
+            }}
+          >
+            ×
+          </button>
+          <div className="chart-container">
+            <Bar data={data} options={options} />
+          </div>
+        </div>
       </div>
     );
   };
-  
 
-    return (
+  return (
     <div className="multiplayer-page-container dark-theme">
       {!isLoggedIn ? (
         <div className="auth-container">
@@ -474,7 +480,7 @@ const MultiplayerPage = () => {
       ) : (
         <div className="multiplayer-container">
           <h1>Multiplayer Typing Game</h1>
-  
+
           {!lobbyId ? (
             <div className="lobby-buttons">
               <button
@@ -557,26 +563,27 @@ const MultiplayerPage = () => {
                   )}
                 </div>
               </div>
-  
+
               {/* Game Area Content */}
               {gameEnded ? (
                 <div className="game-ended">
                   <h2>Game Over ⏰</h2>
                   <p className="winner-message">{determineWinner()}</p>
-                  {/* 👇 Floating chart overlay here */}
-                  {gameEnded && (
-                      <div className="chart-backdrop">
-                      <div className="chart-overlay">
-                        <GameResultChart playerA={playerA} playerB={playerB} text={text} />
-                      </div>
-                    </div>
-                      )}
+
+                  <button
+                    className="view-chart-btn"
+                    onClick={() => setShowChart(true)}
+                  >
+                    View Results Chart
+                  </button>
+
                   <div className="player-results">
                     <div>
                       <h3>Player A: {playerA?.email}</h3>
                       <p>WPM: {playerA?.wpm || 0}</p>
                       <p>
-                        Accuracy: {calculateAccuracy(playerA?.typedText || "", text)}%
+                        Accuracy:{" "}
+                        {calculateAccuracy(playerA?.typedText || "", text)}%
                       </p>
                     </div>
                     {playerB && (
@@ -584,15 +591,24 @@ const MultiplayerPage = () => {
                         <h3>Player B: {playerB?.email}</h3>
                         <p>WPM: {playerB?.wpm || 0}</p>
                         <p>
-                          Accuracy: {calculateAccuracy(playerB?.typedText || "", text)}%
+                          Accuracy:{" "}
+                          {calculateAccuracy(playerB?.typedText || "", text)}%
                         </p>
                       </div>
                     )}
-                   
-                  
                   </div>
+
+                  {showChart && (
+                    <GameResultChart
+                      playerA={playerA}
+                      playerB={playerB}
+                      text={text}
+                      onClose={() => setShowChart(false)}
+                    />
+                  )}
                   <div className="rematch-buttons">
-                    {(playerA?.uid === user?.uid || playerB?.uid === user?.uid) && (
+                    {(playerA?.uid === user?.uid ||
+                      playerB?.uid === user?.uid) && (
                       <button
                         onClick={handleRematch}
                         className="button"
@@ -611,7 +627,7 @@ const MultiplayerPage = () => {
                   <div className="game-info">
                     <h3>Time Left: {timeLeft} seconds</h3>
                   </div>
-                  <div >
+                  <div>
                     <h5>
                       Your WPM:{" "}
                       {playerA?.uid === user?.uid
@@ -619,7 +635,6 @@ const MultiplayerPage = () => {
                         : playerB?.wpm || 0}
                     </h5>
                   </div>
-
 
                   {playerA?.uid === user?.uid && (
                     <div className="player">
@@ -635,7 +650,9 @@ const MultiplayerPage = () => {
                           let className = "";
                           if (typedChar == null) {
                             className =
-                              index === typedTextA.length ? "current" : "pending";
+                              index === typedTextA.length
+                                ? "current"
+                                : "pending";
                           } else if (typedChar === char) {
                             className = "correct";
                           } else {
@@ -650,17 +667,24 @@ const MultiplayerPage = () => {
                       </div>
                     </div>
                   )}
-  
+
                   {playerB?.uid === user?.uid && (
                     <div className="player">
                       <h3>Player B (You)</h3>
-                      <div className="typing-containerr" tabIndex={0} onKeyDown={handleTypingB} ref={typingContainerBRef}>
+                      <div
+                        className="typing-containerr"
+                        tabIndex={0}
+                        onKeyDown={handleTypingB}
+                        ref={typingContainerBRef}
+                      >
                         {text.split("").map((char, index) => {
                           const typedChar = typedTextB[index];
                           let className = "";
                           if (typedChar == null) {
                             className =
-                              index === typedTextB.length ? "current" : "pending";
+                              index === typedTextB.length
+                                ? "current"
+                                : "pending";
                           } else if (typedChar === char) {
                             className = "correct";
                           } else {
@@ -678,9 +702,6 @@ const MultiplayerPage = () => {
                 </div>
               ) : (
                 <>
-                  {countdown > 0 && (
-                    <div className="countdown">Game starts in: {countdown} seconds</div>
-                  )}
                   {playerA?.uid === user?.uid && !gameStarted && (
                     <button
                       onClick={startGame}
@@ -695,7 +716,9 @@ const MultiplayerPage = () => {
                     </button>
                   )}
                   {playerB?.uid === user?.uid && (
-                    <p className="waiting">Waiting for host to start the game...</p>
+                    <p className="waiting">
+                      Waiting for host to start the game...
+                    </p>
                   )}
                 </>
               )}
@@ -705,6 +728,6 @@ const MultiplayerPage = () => {
       )}
     </div>
   );
-}
+};
 
 export default MultiplayerPage;

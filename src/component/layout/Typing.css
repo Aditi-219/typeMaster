@@ -583,16 +583,11 @@ background: #45a049;
   right: 20px;
 }
 
-/* Horizontal User Panel */
 .horizontal-user-panel {
   display: flex;
   align-items: center;
-  gap: 15px;
-  /* background: rgba(42, 42, 42, 0.95); */
-  /* border-radius: 30px; */
+  gap: 10px;
   padding: 6px 15px 6px 10px;
-  /* border: 1px solid #3a3a3a; */
-  /* box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3); */
   font-family: 'Courier New', monospace;
   position: absolute;
   top: 10px;
@@ -740,4 +735,9 @@ background: #45a049;
 
 .logout-button-horizontal:hover {
   background: #3a3a3a;
+}
+@media (max-width: 1200px) {
+ .typingTest{
+  color: #1A1A1A;
+ }
 }

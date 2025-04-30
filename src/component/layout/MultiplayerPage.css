@@ -402,7 +402,6 @@ display: flex;
 justify-content: center;
 gap: 1rem;
 z-index: 10;
-margin-top: 2rem;
 
 }
 
@@ -435,7 +434,7 @@ outline-offset: 2px;
 }
 
 .game-container{
-  max-height: 700px;
+  max-height: 715px;
   min-height: 700px;
 }
 
@@ -463,4 +462,130 @@ outline-offset: 2px;
 .waiting-for-player {
   background-color: #ffeb3b;
   color: #000;
+}
+
+/* Add these styles to your MultiplayerPage.css */
+.chart-overlay-container {
+  position: relative;
+  background: rgba(0, 0, 0, 0.9);
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  width: 80%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.chart-close-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.chart-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.view-chart-btn {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.view-chart-btn:hover {
+  background: #45a049;
+}
+
+/* Chart Modal Styles */
+.chart-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.chart-content {
+  position: relative;
+  background: #2d2d2d;
+  border-radius: 8px;
+  padding: 30px;
+  width: 80%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow: auto;
+}
+
+.chart-close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  z-index: 1001;
+}
+
+.chart-close-btn:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.chart-container {
+  width: 100%;
+  height: 400px;
+  margin-top: 20px;
+}
+
+.countdown-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.countdown-display {
+  text-align: center;
+  color: white;
+}
+
+.countdown-number {
+  font-size: 5rem;
+  font-weight: bold;
+  margin: 20px 0;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
 }
