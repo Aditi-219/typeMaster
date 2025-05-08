@@ -767,7 +767,7 @@ const TypingArea = () => {
       </div>
       {showFocusButton && (
         <button onClick={handleFocusClick} className="focus-button">
-          Click here to focus
+          🔍 Click here to focus
         </button>
       )}
       <div className="header">
