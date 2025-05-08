@@ -8,6 +8,13 @@ import {
   getDoc,
   onSnapshot,
   serverTimestamp,
+  collection,
+  query,
+  orderBy,
+  limit,
+  addDoc,
+  getDocs,
+  deleteDoc
 } from "firebase/firestore"; // Firestore methods
 import "./MultiplayerPage.css";
 
@@ -46,6 +53,8 @@ const MultiplayerPage = () => {
   const typingContainerBRef = React.useRef(null);
   const auth = getAuth();
   const [showChart, setShowChart] = useState(false);
+  const [messages, setMessages] = useState([]);
+  const [newMessage, setNewMessage] = useState("");
 
   // Sample text for typing
   const sampleText = "The quick brown fox jumped over the lazy dog.";
@@ -471,6 +480,49 @@ const MultiplayerPage = () => {
     );
   };
 
+  // Chat Firestore listener
+  useEffect(() => {
+    if (!lobbyId) return;
+
+    const q = query(
+      collection(db, "lobbies", lobbyId, "messages"),
+      orderBy("timestamp", "desc"),
+      limit(50)
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const chatData = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })).reverse();
+      setMessages(chatData);
+    });
+
+    return () => unsubscribe();
+  }, [lobbyId]);
+
+  const sendMessage = async () => {
+    const trimmed = newMessage.trim();
+    if (!trimmed || !user?.uid || !lobbyId) return;
+
+    await addDoc(collection(db, "lobbies", lobbyId, "messages"), {
+      text: trimmed,
+      senderId: user.uid,
+      senderEmail: user.email,
+      timestamp: serverTimestamp(),
+    });
+
+    setNewMessage("");
+  };
+
+  const cleanupChat = async () => {
+    const messagesRef = collection(db, "lobbies", lobbyId, "messages");
+    const snapshot = await getDocs(messagesRef);
+    const deletes = snapshot.docs.map((doc) => deleteDoc(doc.ref));
+    await Promise.all(deletes);
+  };
+
+
   return (
     <div className="multiplayer-page-container dark-theme">
       {!isLoggedIn ? (
@@ -726,6 +778,48 @@ const MultiplayerPage = () => {
           )}
         </div>
       )}
+            {/* Chat Box */}
+            <div className="chat-container">
+        <div className="chat-messages">
+          {messages.map((msg) => (
+            <div
+              key={msg.id}
+              className={`chat-msg ${msg.senderId === user?.uid ? "own" : ""}`}
+            >
+              <strong>{msg.senderEmail}:</strong> <span>{msg.text}</span>
+            </div>
+          ))}
+        </div>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            sendMessage();
+          }}
+          className="chat-input-form"
+        >
+          <input
+            type="text"
+            placeholder="Type a message..."
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            className="chat-input"
+          />
+          <button type="submit" className="chat-send-btn">
+            Send
+          </button>
+        </form>
+      </div>
+
+      {/* Leave Lobby (with chat cleanup) */}
+      <button
+        onClick={async () => {
+          await cleanupChat();
+          setLobbyId("");
+        }}
+        className="button"
+      >
+        Leave Lobby
+      </button>
     </div>
   );
 };
