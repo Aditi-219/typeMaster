@@ -721,3 +721,9 @@ h3 {
     padding: .5rem;
   }
 }
+
+.typing-field:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(124, 77, 255, 0.3);
+}

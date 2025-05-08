@@ -14,7 +14,7 @@ import {
   limit,
   addDoc,
   getDocs,
-  deleteDoc
+  deleteDoc,
 } from "firebase/firestore"; // Firestore methods
 import "./MultiplayerPage.css";
 
@@ -32,6 +32,188 @@ import { MessageCircle, Send, User } from "lucide-react";
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
 const MultiplayerPage = () => {
+  const largeSampleText = `
+The quick brown fox jumps over the lazy dog. This sentence contains all the letters in the English alphabet. 
+Programming is the process of creating a set of instructions that tell a computer how to perform a task. 
+React is a JavaScript library for building user interfaces. It is maintained by Facebook and a community of individual developers and companies.
+TypeScript is a strongly typed programming language that builds on JavaScript, giving you better tooling at any scale.
+The best way to learn to code is by actually coding. Practice makes perfect when it comes to programming.
+Algorithms are step-by-step procedures for calculations. Data structures are ways to organize and store data.
+Clean code is code that is easy to understand and easy to change. Always write code as if the person who ends up maintaining it is a violent psychopath who knows where you live.
+The only way to go fast is to go well. Quality is never an accident; it is always the result of intelligent effort.
+JavaScript is the world's most popular programming language. It is the programming language of the Web.
+Computer science is no more about computers than astronomy is about telescopes. It's about solving problems.
+The most disastrous thing that you can ever learn is your first programming language. The second one always seems easier.
+Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.
+There are two ways of constructing a software design: One way is to make it so simple that there are obviously no deficiencies, and the other way is to make it so complicated that there are no obvious deficiencies.
+Measuring programming progress by lines of code is like measuring aircraft building progress by weight.
+The most important property of a program is whether it accomplishes the intention of its user.
+Any fool can write code that a computer can understand. Good programmers write code that humans can understand.
+First, solve the problem. Then, write the code. Programming isn't about what you know; it's about what you can figure out.
+Sometimes it pays to stay in bed on Monday, rather than spending the rest of the week debugging Monday's code.
+The best thing about a boolean is even if you are wrong, you are only off by a bit.
+If debugging is the process of removing software bugs, then programming must be the process of putting them in.
+It's not a bug - it's an undocumented feature. The computer was born to solve problems that did not exist before.
+Python is an interpreted, high-level, general-purpose programming language known for its readability and simplicity.
+Object-oriented programming is a paradigm based on the concept of objects which can contain data and code.
+Functional programming treats computation as the evaluation of mathematical functions and avoids changing state.
+Version control systems like Git help developers track and manage changes to their code over time.
+Continuous integration and continuous delivery are practices that enable teams to release code changes more frequently.
+Test-driven development is a software development process that relies on repeating a very short development cycle.
+Design patterns are typical solutions to commonly occurring problems in software design.
+Microservices architecture structures an application as a collection of loosely coupled services.
+Containerization allows applications to be packaged with their dependencies and run consistently across environments.
+Cloud computing provides on-demand availability of computer system resources without direct active management.
+Machine learning is the study of computer algorithms that improve automatically through experience.
+Artificial intelligence is intelligence demonstrated by machines, in contrast to the natural intelligence displayed by humans.
+Big data refers to data sets that are too large or complex for traditional data-processing application software.
+The Internet of Things describes the network of physical objects embedded with sensors and software.
+Blockchain is a growing list of records, called blocks, that are linked using cryptography.
+Cybersecurity is the practice of protecting systems, networks, and programs from digital attacks.
+DevOps is a set of practices that combines software development and IT operations.
+Agile software development emphasizes iterative development, where requirements evolve through collaboration.
+User experience design is the process of enhancing user satisfaction by improving usability and accessibility.
+Responsive web design makes web pages render well on a variety of devices and window sizes.
+Progressive web apps are web applications that load like regular web pages but offer additional functionality.
+Single-page applications interact with the user by dynamically rewriting the current page.
+REST is an architectural style for designing networked applications using simple, stateless operations.
+GraphQL is a query language for APIs that gives clients the power to ask for exactly what they need.
+NoSQL databases provide a mechanism for storage and retrieval of data that is modeled differently from relational databases.
+SQL is a domain-specific language used in programming and designed for managing relational databases.
+The waterfall model is a sequential design process used in software development.
+Scrum is an agile framework for developing, delivering, and sustaining complex products.
+Kanban is a visual system for managing work as it moves through a process.
+Pair programming is an agile software development technique where two programmers work together at one workstation.
+Code review is a software quality assurance activity where one or more people check a program.
+Refactoring is the process of restructuring existing computer code without changing its external behavior.
+Technical debt reflects the implied cost of additional rework caused by choosing an easy solution now instead of a better approach.
+The Linux kernel is a free and open-source, monolithic, modular, multitasking Unix-like operating system kernel.
+The Windows operating system is a group of several proprietary graphical operating system families.
+macOS is a series of proprietary graphical operating systems developed by Apple.
+Android is a mobile operating system based on a modified version of the Linux kernel.
+iOS is a mobile operating system created and developed by Apple exclusively for its hardware.
+Virtual reality is a simulated experience that can be similar to or completely different from the real world.
+Augmented reality is an interactive experience of a real-world environment enhanced by computer-generated perceptual information.
+Quantum computing is the use of quantum phenomena such as superposition and entanglement to perform computation.
+The command line interface is a means of interacting with a computer program where the user issues commands.
+The graphical user interface allows users to interact with electronic devices through graphical icons.
+Natural language processing is a subfield of linguistics, computer science, and artificial intelligence.
+Computer vision is an interdisciplinary field that deals with how computers can gain understanding from digital images.
+Robotics is an interdisciplinary branch of engineering and science that includes mechanical engineering.
+Bioinformatics is an interdisciplinary field that develops methods and software tools for understanding biological data.
+Computational physics is the study and implementation of numerical analysis to solve problems in physics.
+Computational chemistry is a branch of chemistry that uses computer simulation to assist in solving chemical problems.
+Computational biology involves the development and application of data-analytical and theoretical methods.
+Neural networks are a series of algorithms that attempt to recognize underlying relationships in data.
+Deep learning is part of a broader family of machine learning methods based on artificial neural networks.
+Computer graphics are pictures and films created using computers, often with specialized hardware and software.
+Human-computer interaction researches the design and use of computer technology focused on interfaces.
+Ubiquitous computing is a concept in software engineering where computing is made to appear everywhere.
+Edge computing is a distributed computing paradigm that brings computation closer to data sources.
+Fog computing extends cloud computing to the edge of an enterprise's network.
+Serverless computing is a cloud computing execution model where the cloud provider runs the server.
+Quantum supremacy is the potential ability of quantum computing devices to solve problems.
+The singularity is a hypothetical future point when technological growth becomes uncontrollable.
+Nanotechnology is manipulation of matter on an atomic, molecular, and supramolecular scale.
+Biometrics is the technical term for body measurements and calculations related to human characteristics.
+Cryptography is the practice and study of techniques for secure communication.
+Digital forensics is a branch of forensic science encompassing recovery and investigation.
+Information security protects information from unauthorized access to avoid identity theft.
+Network security consists of policies and practices to prevent unauthorized access.
+Application security focuses on keeping software and devices free of threats.
+Operational security includes processes and decisions for handling and protecting data assets.
+Disaster recovery involves a set of policies and procedures to recover from natural or human-induced disasters.
+Business continuity is the process of creating systems of prevention and recovery.
+Risk management is the identification, evaluation, and prioritization of risks.
+Incident response is an organized approach to addressing and managing a security breach.
+Ethical hacking involves an authorized attempt to gain unauthorized access.
+Penetration testing is a simulated cyber attack against a computer system.
+Vulnerability assessment is the process of identifying and quantifying vulnerabilities.
+Security information and event management provides real-time analysis of security alerts.
+Intrusion detection system monitors network or system activities for malicious activities.
+Intrusion prevention system monitors network or system activities for malicious activity.
+Firewall is a network security system that monitors incoming and outgoing network traffic.
+Virtual private network extends a private network across a public network.
+Two-factor authentication is a method of confirming users' identities using two different factors.
+Multi-factor authentication is an authentication method requiring multiple verification methods.
+Biometric authentication is a security process that relies on unique biological characteristics.
+Public key infrastructure is a set of roles, policies, and procedures to manage digital certificates.
+Digital signature is a mathematical scheme for verifying the authenticity of digital messages.
+Blockchain technology is a decentralized, distributed ledger that records transactions.
+Smart contracts are self-executing contracts with the terms directly written into code.
+Cryptocurrency is a digital asset designed to work as a medium of exchange.
+Bitcoin is a decentralized digital currency without a central bank or single administrator.
+Ethereum is an open-source, blockchain-based platform featuring smart contract functionality.
+Litecoin is a peer-to-peer cryptocurrency and open-source software project.
+Ripple is a real-time gross settlement system, currency exchange and remittance network.
+Initial coin offering is a type of funding using cryptocurrencies.
+Security token offering is a type of public offering in which tokenized digital securities.
+Decentralized finance aims to create an open-source, permissionless financial service ecosystem.
+Stablecoin is a type of cryptocurrency designed to minimize price volatility.
+Tokenization is the process of substituting a sensitive data element with a non-sensitive equivalent.
+Distributed ledger is a consensus of replicated, shared, and synchronized digital data.
+Consensus algorithm is a process used to achieve agreement on a single data value.
+Proof of work is a form of cryptographic proof in which one party proves to others.
+Proof of stake is a type of consensus algorithm by which a cryptocurrency blockchain network.
+Delegated proof of stake is a variation of the proof of stake consensus mechanism.
+Byzantine fault tolerance is a property of systems that can resist failures.
+Sharding is a database partitioning technique used to improve performance.
+Sidechain is a separate blockchain that is attached to its parent blockchain.
+Atomic swap is a smart contract technology enabling exchange of one cryptocurrency for another.
+Zero-knowledge proof is a method by which one party can prove to another party.
+Homomorphic encryption is a form of encryption allowing computation on ciphertexts.
+Quantum cryptography is the science of exploiting quantum mechanical properties.
+Post-quantum cryptography refers to cryptographic algorithms thought to be secure.
+Secure multi-party computation is a subfield of cryptography with the goal of creating methods.
+Trusted execution environment is a secure area of a main processor guaranteeing code execution.
+Hardware security module is a physical computing device that safeguards digital keys.
+Root of trust is a source that can always be trusted within a cryptographic system.
+Trusted platform module is a specialized chip on an endpoint device that stores RSA keys.
+Secure enclave is a hardware-based isolated computing environment.
+Confidential computing protects data in use by performing computation in a hardware-based environment.
+Differential privacy is a system for publicly sharing information while withholding private data.
+Federated learning is a machine learning technique that trains an algorithm.
+Transfer learning is a research problem in machine learning focusing on applying knowledge.
+Self-supervised learning is a paradigm for unsupervised learning using the data itself.
+Reinforcement learning is an area of machine learning concerned with how agents ought to take actions.
+Semi-supervised learning is a class of machine learning techniques using both labeled and unlabeled data.
+Active learning is a special case of machine learning where the learning algorithm can query.
+Meta-learning is a subfield of machine learning where automatic learning algorithms are applied.
+Ensemble learning uses multiple learning algorithms to obtain better predictive performance.
+Online learning is a method of machine learning where data becomes available in a sequential order.
+Multi-task learning is an approach to inductive transfer that improves generalization.
+Curriculum learning is a type of learning where tasks are presented in a meaningful order.
+Explainable AI refers to methods and techniques making AI decisions understandable.
+Fairness in machine learning is the study of how to prevent algorithms from discriminating.
+AI safety is an interdisciplinary field concerned with the long-term impacts of artificial intelligence.
+AI alignment is the problem of ensuring AI systems achieve their intended goals.
+Artificial general intelligence is the hypothetical ability of an intelligent agent to understand.
+Superintelligence is a hypothetical agent possessing intelligence surpassing that of humans.
+Singularitarianism is a movement that believes a technological singularity will occur.
+Transhumanism is a philosophical movement that advocates for the transformation of the human condition.
+Posthumanism is a philosophical concept addressing the aftermath of the human condition.
+Digital twin is a digital replica of a living or non-living physical entity.
+Cyber-physical system is a mechanism controlled or monitored by computer-based algorithms.
+Industrial Internet of Things refers to interconnected sensors and other devices networked together.
+Industry 4.0 is the current trend of automation and data exchange in manufacturing technologies.
+Smart factory is a highly digitized and connected production facility.
+Digital transformation is the adoption of digital technology to transform services or businesses.
+Business process reengineering is the analysis and redesign of workflows within an organization.
+Enterprise architecture is a conceptual blueprint defining the structure and operation of an organization.
+Service-oriented architecture is a style of software design where services are provided.
+Microservices are a variant of service-oriented architecture structuring an application.
+API gateway is an API management tool that sits between a client and a collection of backend services.
+Event-driven architecture is a software architecture pattern promoting production and detection.
+Command query responsibility segregation is a pattern that separates read and write operations.
+Domain-driven design is an approach to software development for complex needs.
+Test automation is the use of software to control the execution of tests.
+Continuous testing is the process of executing automated tests as part of the software delivery pipeline.
+Behavior-driven development is an agile software development process encouraging collaboration.
+Acceptance test-driven development is a development methodology based on communication.
+Exploratory testing is an approach to software testing that emphasizes personal freedom.
+Load testing is the process of putting demand on a system and measuring its response.
+Stress testing determines the robustness of software by testing
+`;
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
   const [lobbyId, setLobbyId] = useState("");
@@ -59,7 +241,22 @@ const MultiplayerPage = () => {
 
   // Sample text for typing
   const sampleText = "The quick brown fox jumped over the lazy dog.";
-
+  const getRandomTextSegment = () => {
+    // Split the large text into sentences
+    const sentences = largeSampleText.split('. ').filter(s => s.trim().length > 0);
+    
+    // Determine how many sentences to include (between 3-6)
+    const sentenceCount = Math.floor(Math.random() * 4) + 3;
+    
+    // Select random sentences
+    let selectedSentences = [];
+    for (let i = 0; i < sentenceCount; i++) {
+      const randomIndex = Math.floor(Math.random() * sentences.length);
+      selectedSentences.push(sentences[randomIndex] + (i < sentenceCount - 1 ? '. ' : '.'));
+    }
+    
+    return selectedSentences.join('');
+  };
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
@@ -81,19 +278,36 @@ const MultiplayerPage = () => {
   }, [lobbyId]);
 
   // Add this to your existing useEffect
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const container =
-        playerA?.uid === user?.uid
-          ? typingContainerARef.current
-          : typingContainerBRef.current;
-      if (container && document.activeElement !== container) {
-        container.focus();
-      }
-    }, 50);
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     const container =
+  //       playerA?.uid === user?.uid
+  //         ? typingContainerARef.current
+  //         : typingContainerBRef.current;
+  //     if (container && document.activeElement !== container) {
+  //       container.focus();
+  //     }
+  //   }, 50);
 
-    return () => clearInterval(interval);
-  }, [playerA, playerB, user]);
+  //   return () => clearInterval(interval);
+  // }, [playerA, playerB, user]);
+  useEffect(() => {
+    if (gameStarted) {
+      // Use requestAnimationFrame for better timing
+      requestAnimationFrame(() => {
+        const container = 
+          playerA?.uid === user?.uid 
+            ? typingContainerARef.current 
+            : typingContainerBRef.current;
+        
+        if (container) {
+          container.focus();
+          // Ensure the container is scrollable and visible
+          container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      });
+    }
+  }, [gameStarted, playerA, playerB, user]);
 
   useEffect(() => {
     if (!lobbyId) return;
@@ -143,7 +357,7 @@ const MultiplayerPage = () => {
     await setDoc(lobbyRef, {
       playerA: player,
       playerB: null,
-      text: sampleText,
+      text: getRandomTextSegment(),
       // countdown: 3,
       gameStarted: false,
       gameEnded: false,
@@ -382,6 +596,7 @@ const MultiplayerPage = () => {
       await updateDoc(lobbyRef, {
         gameStarted: false,
         gameEnded: false,
+        text: getRandomTextSegment(),
         // countdown: 3,
         "playerA.typedText": "",
         "playerA.wpm": 0,
@@ -406,7 +621,7 @@ const MultiplayerPage = () => {
   };
 
   useEffect(() => {
-    if (gameStarted ) {
+    if (gameStarted) {
       // Small timeout to ensure the container is rendered
       setTimeout(() => {
         if (playerA?.uid === user?.uid && typingContainerARef.current) {
@@ -491,10 +706,12 @@ const MultiplayerPage = () => {
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const chatData = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })).reverse();
+      const chatData = snapshot.docs
+        .map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }))
+        .reverse();
       setMessages(chatData);
     });
 
@@ -515,7 +732,7 @@ const MultiplayerPage = () => {
     const snapshot = await getDocs(
       query(messagesRef, orderBy("timestamp", "asc"))
     );
-  
+
     if (snapshot.size > 50) {
       const excess = snapshot.size - 50;
       const deletions = snapshot.docs
@@ -532,7 +749,6 @@ const MultiplayerPage = () => {
     const deletes = snapshot.docs.map((doc) => deleteDoc(doc.ref));
     await Promise.all(deletes);
   };
-
 
   return (
     <div className="multiplayer-page-container">
@@ -592,14 +808,26 @@ const MultiplayerPage = () => {
                       Lobby: <span className="lobby-id">{lobbyId}</span>
                     </h2>
                     <div className="player-status">
-                      <div className={`player-badge ${playerA?.uid === user?.uid ? "you" : ""}`}>
+                      <div
+                        className={`player-badge ${
+                          playerA?.uid === user?.uid ? "you" : ""
+                        }`}
+                      >
                         <span className="player-name">{playerA?.email}</span>
-                        {playerA?.uid === user?.uid && <span className="you-indicator">YOU</span>}
+                        {playerA?.uid === user?.uid && (
+                          <span className="you-indicator">YOU</span>
+                        )}
                       </div>
                       {playerB && (
-                        <div className={`player-badge ${playerB?.uid === user?.uid ? "you" : ""}`}>
+                        <div
+                          className={`player-badge ${
+                            playerB?.uid === user?.uid ? "you" : ""
+                          }`}
+                        >
                           <span className="player-name">{playerB?.email}</span>
-                          {playerB?.uid === user?.uid && <span className="you-indicator">YOU</span>}
+                          {playerB?.uid === user?.uid && (
+                            <span className="you-indicator">YOU</span>
+                          )}
                         </div>
                       )}
                     </div>
@@ -610,7 +838,9 @@ const MultiplayerPage = () => {
                       {playerB ? (
                         <div className="status-tag full">Ready</div>
                       ) : (
-                        <div className="status-tag waiting">Waiting for opponent</div>
+                        <div className="status-tag waiting">
+                          Waiting for opponent
+                        </div>
                       )}
                     </div>
                   )}
@@ -626,7 +856,9 @@ const MultiplayerPage = () => {
                         <h3>Player A</h3>
                         <div className="stat">
                           <span className="stat-label">WPM:</span>
-                          <span className="stat-value">{playerA?.wpm || 0}</span>
+                          <span className="stat-value">
+                            {playerA?.wpm || 0}
+                          </span>
                         </div>
                         <div className="stat">
                           <span className="stat-label">Accuracy:</span>
@@ -640,12 +872,18 @@ const MultiplayerPage = () => {
                           <h3>Player B</h3>
                           <div className="stat">
                             <span className="stat-label">WPM:</span>
-                            <span className="stat-value">{playerB?.wpm || 0}</span>
+                            <span className="stat-value">
+                              {playerB?.wpm || 0}
+                            </span>
                           </div>
                           <div className="stat">
                             <span className="stat-label">Accuracy:</span>
                             <span className="stat-value">
-                              {calculateAccuracy(playerB?.typedText || "", text)}%
+                              {calculateAccuracy(
+                                playerB?.typedText || "",
+                                text
+                              )}
+                              %
                             </span>
                           </div>
                         </div>
@@ -660,7 +898,8 @@ const MultiplayerPage = () => {
                         View Performance Chart
                       </button>
                       <div className="rematch-options">
-                        {(playerA?.uid === user?.uid || playerB?.uid === user?.uid) && (
+                        {(playerA?.uid === user?.uid ||
+                          playerB?.uid === user?.uid) && (
                           <button
                             onClick={handleRematch}
                             className="btn btn-primary"
@@ -669,11 +908,11 @@ const MultiplayerPage = () => {
                             {isLoading ? "Preparing..." : "Rematch"}
                           </button>
                         )}
-                        <button 
+                        <button
                           onClick={async () => {
                             await cleanupChat();
                             setLobbyId("");
-                          }} 
+                          }}
                           className="btn btn-exit btnLobby"
                         >
                           Exit Lobby
@@ -694,10 +933,14 @@ const MultiplayerPage = () => {
                   <div className="typing-game">
                     <div className="game-meta">
                       <div className="timer">
-                        <span className="time-left">{timeLeft}</span> seconds remaining
+                        <span className="time-left">{timeLeft}</span> seconds
+                        remaining
                       </div>
                       <div className="wpm-display">
-                        Your WPM: {playerA?.uid === user?.uid ? playerA?.wpm || 0 : playerB?.wpm || 0}
+                        Your WPM:{" "}
+                        {playerA?.uid === user?.uid
+                          ? playerA?.wpm || 0
+                          : playerB?.wpm || 0}
                       </div>
                     </div>
 
@@ -715,7 +958,10 @@ const MultiplayerPage = () => {
                               const typedChar = typedTextA[index];
                               let className = "";
                               if (typedChar == null) {
-                                className = index === typedTextA.length ? "current-char" : "pending-char";
+                                className =
+                                  index === typedTextA.length
+                                    ? "current-char"
+                                    : "pending-char";
                               } else if (typedChar === char) {
                                 className = "correct-char";
                               } else {
@@ -744,7 +990,10 @@ const MultiplayerPage = () => {
                               const typedChar = typedTextB[index];
                               let className = "";
                               if (typedChar == null) {
-                                className = index === typedTextB.length ? "current-char" : "pending-char";
+                                className =
+                                  index === typedTextB.length
+                                    ? "current-char"
+                                    : "pending-char";
                               } else if (typedChar === char) {
                                 className = "correct-char";
                               } else {
@@ -797,7 +1046,9 @@ const MultiplayerPage = () => {
                 {messages.map((msg) => (
                   <div
                     key={msg.id}
-                    className={`message ${msg.senderId === user?.uid ? "sent" : "received"}`}
+                    className={`message ${
+                      msg.senderId === user?.uid ? "sent" : "received"
+                    }`}
                   >
                     <div className="message-sender">{msg.senderEmail}</div>
                     <div className="message-content">{msg.text}</div>
@@ -819,9 +1070,27 @@ const MultiplayerPage = () => {
                   className="message-input"
                 />
                 <button type="submit" className="send-button">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M22 2L11 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M22 2L11 13"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M22 2L15 22L11 13L2 9L22 2Z"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
                   </svg>
                 </button>
               </form>
