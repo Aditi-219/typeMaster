@@ -27,6 +27,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import { MessageCircle, Send, User } from "lucide-react";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
@@ -59,7 +60,6 @@ const MultiplayerPage = () => {
   // Sample text for typing
   const sampleText = "The quick brown fox jumped over the lazy dog.";
 
-  // Check if user is logged in
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
@@ -144,7 +144,7 @@ const MultiplayerPage = () => {
       playerA: player,
       playerB: null,
       text: sampleText,
-      countdown: 3,
+      // countdown: 3,
       gameStarted: false,
       gameEnded: false,
       canJoin: true, // Add this field to track join status
@@ -224,16 +224,16 @@ const MultiplayerPage = () => {
       setGameStarted(true);
 
       // Start countdown
-      let countdownValue = 3;
-      const countdownInterval = setInterval(() => {
-        if (countdownValue > 0) {
-          setCountdown(countdownValue);
-          countdownValue -= 1;
-        } else {
-          clearInterval(countdownInterval);
-          setCountdown(0);
-        }
-      }, 1000);
+      // let countdownValue = 3;
+      // const countdownInterval = setInterval(() => {
+      //   if (countdownValue > 0) {
+      //     setCountdown(countdownValue);
+      //     countdownValue -= 1;
+      //   } else {
+      //     clearInterval(countdownInterval);
+      //     setCountdown(0);
+      //   }
+      // }, 1000);
     }
   };
 
@@ -382,7 +382,7 @@ const MultiplayerPage = () => {
       await updateDoc(lobbyRef, {
         gameStarted: false,
         gameEnded: false,
-        countdown: 3,
+        // countdown: 3,
         "playerA.typedText": "",
         "playerA.wpm": 0,
         "playerB.typedText": "",
@@ -406,7 +406,7 @@ const MultiplayerPage = () => {
   };
 
   useEffect(() => {
-    if (gameStarted && countdown === 0) {
+    if (gameStarted ) {
       // Small timeout to ensure the container is rendered
       setTimeout(() => {
         if (playerA?.uid === user?.uid && typingContainerARef.current) {
@@ -416,7 +416,7 @@ const MultiplayerPage = () => {
         }
       }, 100);
     }
-  }, [gameStarted, countdown, playerA, playerB, user]);
+  }, [gameStarted, playerA, playerB, user]);
 
   const GameResultChart = ({ playerA, playerB, text, onClose }) => {
     const calculateAccuracy = (typedText, originalText) => {
@@ -504,14 +504,25 @@ const MultiplayerPage = () => {
   const sendMessage = async () => {
     const trimmed = newMessage.trim();
     if (!trimmed || !user?.uid || !lobbyId) return;
-
+    const messagesRef = collection(db, "lobbies", lobbyId, "messages");
     await addDoc(collection(db, "lobbies", lobbyId, "messages"), {
       text: trimmed,
       senderId: user.uid,
       senderEmail: user.email,
       timestamp: serverTimestamp(),
     });
-
+    // Delete messages if over 50
+    const snapshot = await getDocs(
+      query(messagesRef, orderBy("timestamp", "asc"))
+    );
+  
+    if (snapshot.size > 50) {
+      const excess = snapshot.size - 50;
+      const deletions = snapshot.docs
+        .slice(0, excess)
+        .map((doc) => deleteDoc(doc.ref));
+      await Promise.all(deletions);
+    }
     setNewMessage("");
   };
 
@@ -524,302 +535,300 @@ const MultiplayerPage = () => {
 
 
   return (
-    <div className="multiplayer-page-container dark-theme">
+    <div className="multiplayer-page-container">
       {!isLoggedIn ? (
         <div className="auth-container">
           <p>Please log in to play multiplayer.</p>
         </div>
       ) : (
-        <div className="multiplayer-container">
-          <h1>Multiplayer Typing Game</h1>
+        <div className="multiplayer-layout">
+          <div className="game-container">
+            <h1 className="game-title">Multiplayer Typing Duel</h1>
 
-          {!lobbyId ? (
-            <div className="lobby-buttons">
-              <button
-                onClick={createLobby}
-                className="button primary"
-                disabled={isLoading}
-              >
-                {isLoading ? "Creating..." : "Create Lobby"}
-              </button>
-              <div className="join-lobby">
-                <input
-                  type="text"
-                  placeholder="Enter Lobby ID"
-                  value={lobbyInput}
-                  onChange={(e) => setLobbyInput(e.target.value)}
-                  className="input-lobby"
-                />
-                <button
-                  onClick={() => {
-                    setLobbyId(lobbyInput);
-                    setShouldJoinLobby(true);
-                  }}
-                  className="button secondary"
-                  disabled={
-                    !lobbyInput ||
-                    lobbyInput.length < 6 ||
-                    isLoading ||
-                    (playerB && playerB.uid !== user?.uid) ||
-                    gameStarted
-                  }
-                >
-                  {isLoading ? "Joining..." : "Join Lobby"}
-                </button>
-              </div>
-              {lobbyError && <p className="error-message">{lobbyError}</p>}
-            </div>
-          ) : (
-            <div className="game-container">
-              <div className="lobby-info">
-                <h2>
-                  Lobby: <span className="lobby-id">{lobbyId}</span>
-                </h2>
-                <div className="player-list">
-                  <div
-                    className={`player-tag ${
-                      playerA?.uid === user?.uid ? "you" : ""
-                    }`}
-                  >
-                    <span className="player-label">Player A:</span>
-                    <span className="player-email">{playerA?.email}</span>
-                    {playerA?.uid === user?.uid && (
-                      <span className="you-badge">YOU</span>
-                    )}
-                  </div>
-                  {playerB && (
-                    <div
-                      className={`player-tag ${
-                        playerB?.uid === user?.uid ? "you" : ""
-                      }`}
-                    >
-                      <span className="player-label">Player B:</span>
-                      <span className="player-email">{playerB?.email}</span>
-                      {playerB?.uid === user?.uid && (
-                        <span className="you-badge">YOU</span>
-                      )}
-                    </div>
-                  )}
-                </div>
-                <div className="lobby-status">
-                  {!gameStarted && (
-                    <div className="lobby-status">
-                      {playerB ? (
-                        <p className="status-badge lobby-full">Lobby full</p>
-                      ) : (
-                        <p className="status-badge waiting-for-player">
-                          Waiting for Player B
-                        </p>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Game Area Content */}
-              {gameEnded ? (
-                <div className="game-ended">
-                  <h2>Game Over ⏰</h2>
-                  <p className="winner-message">{determineWinner()}</p>
-
+            {!lobbyId ? (
+              <div className="lobby-creation">
+                <div className="lobby-actions">
                   <button
-                    className="view-chart-btn"
-                    onClick={() => setShowChart(true)}
+                    onClick={createLobby}
+                    className="btn btn-primary"
+                    disabled={isLoading}
                   >
-                    View Results Chart
+                    {isLoading ? "Creating..." : "Create Lobby"}
                   </button>
-
-                  <div className="player-results">
-                    <div>
-                      <h3>Player A: {playerA?.email}</h3>
-                      <p>WPM: {playerA?.wpm || 0}</p>
-                      <p>
-                        Accuracy:{" "}
-                        {calculateAccuracy(playerA?.typedText || "", text)}%
-                      </p>
-                    </div>
-                    {playerB && (
-                      <div>
-                        <h3>Player B: {playerB?.email}</h3>
-                        <p>WPM: {playerB?.wpm || 0}</p>
-                        <p>
-                          Accuracy:{" "}
-                          {calculateAccuracy(playerB?.typedText || "", text)}%
-                        </p>
+                  <div className="divider">OR</div>
+                  <div className="join-section">
+                    <input
+                      type="text"
+                      placeholder="Enter Lobby ID"
+                      value={lobbyInput}
+                      onChange={(e) => setLobbyInput(e.target.value)}
+                      className="lobby-input"
+                    />
+                    <button
+                      onClick={() => {
+                        setLobbyId(lobbyInput);
+                        setShouldJoinLobby(true);
+                      }}
+                      className=" btn-secondary"
+                      disabled={
+                        !lobbyInput ||
+                        lobbyInput.length < 6 ||
+                        isLoading ||
+                        (playerB && playerB.uid !== user?.uid) ||
+                        gameStarted
+                      }
+                    >
+                      {isLoading ? "Joining..." : "Join Lobby"}
+                    </button>
+                  </div>
+                </div>
+                {lobbyError && <p className="error-message">{lobbyError}</p>}
+              </div>
+            ) : (
+              <div className="game-content">
+                <div className="lobby-header">
+                  <div className="lobby-info">
+                    <h2>
+                      Lobby: <span className="lobby-id">{lobbyId}</span>
+                    </h2>
+                    <div className="player-status">
+                      <div className={`player-badge ${playerA?.uid === user?.uid ? "you" : ""}`}>
+                        <span className="player-name">{playerA?.email}</span>
+                        {playerA?.uid === user?.uid && <span className="you-indicator">YOU</span>}
                       </div>
-                    )}
+                      {playerB && (
+                        <div className={`player-badge ${playerB?.uid === user?.uid ? "you" : ""}`}>
+                          <span className="player-name">{playerB?.email}</span>
+                          {playerB?.uid === user?.uid && <span className="you-indicator">YOU</span>}
+                        </div>
+                      )}
+                    </div>
                   </div>
 
-                  {showChart && (
-                    <GameResultChart
-                      playerA={playerA}
-                      playerB={playerB}
-                      text={text}
-                      onClose={() => setShowChart(false)}
-                    />
+                  {!gameStarted && (
+                    <div className="lobby-state">
+                      {playerB ? (
+                        <div className="status-tag full">Ready</div>
+                      ) : (
+                        <div className="status-tag waiting">Waiting for opponent</div>
+                      )}
+                    </div>
                   )}
-                  <div className="rematch-buttons">
-                    {(playerA?.uid === user?.uid ||
-                      playerB?.uid === user?.uid) && (
+                </div>
+
+                {gameEnded ? (
+                  <div className="game-results">
+                    <h2 className="results-title">Game Over!</h2>
+                    <p className="winner-announcement">{determineWinner()}</p>
+
+                    <div className="performance-stats">
+                      <div className="player-stats">
+                        <h3>Player A</h3>
+                        <div className="stat">
+                          <span className="stat-label">WPM:</span>
+                          <span className="stat-value">{playerA?.wpm || 0}</span>
+                        </div>
+                        <div className="stat">
+                          <span className="stat-label">Accuracy:</span>
+                          <span className="stat-value">
+                            {calculateAccuracy(playerA?.typedText || "", text)}%
+                          </span>
+                        </div>
+                      </div>
+                      {playerB && (
+                        <div className="player-stats">
+                          <h3>Player B</h3>
+                          <div className="stat">
+                            <span className="stat-label">WPM:</span>
+                            <span className="stat-value">{playerB?.wpm || 0}</span>
+                          </div>
+                          <div className="stat">
+                            <span className="stat-label">Accuracy:</span>
+                            <span className="stat-value">
+                              {calculateAccuracy(playerB?.typedText || "", text)}%
+                            </span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="results-actions">
                       <button
-                        onClick={handleRematch}
-                        className="button"
-                        disabled={isLoading}
+                        className="btn btn-chart"
+                        onClick={() => setShowChart(true)}
                       >
-                        {isLoading ? "Loading..." : "Rematch"}
+                        View Performance Chart
+                      </button>
+                      <div className="rematch-options">
+                        {(playerA?.uid === user?.uid || playerB?.uid === user?.uid) && (
+                          <button
+                            onClick={handleRematch}
+                            className="btn btn-primary"
+                            disabled={isLoading}
+                          >
+                            {isLoading ? "Preparing..." : "Rematch"}
+                          </button>
+                        )}
+                        <button 
+                          onClick={async () => {
+                            await cleanupChat();
+                            setLobbyId("");
+                          }} 
+                          className="btn btn-exit btnLobby"
+                        >
+                          Exit Lobby
+                        </button>
+                      </div>
+                    </div>
+
+                    {showChart && (
+                      <GameResultChart
+                        playerA={playerA}
+                        playerB={playerB}
+                        text={text}
+                        onClose={() => setShowChart(false)}
+                      />
+                    )}
+                  </div>
+                ) : gameStarted ? (
+                  <div className="typing-game">
+                    <div className="game-meta">
+                      <div className="timer">
+                        <span className="time-left">{timeLeft}</span> seconds remaining
+                      </div>
+                      <div className="wpm-display">
+                        Your WPM: {playerA?.uid === user?.uid ? playerA?.wpm || 0 : playerB?.wpm || 0}
+                      </div>
+                    </div>
+
+                    <div className="typing-arena">
+                      {playerA?.uid === user?.uid && (
+                        <div className="typing-section">
+                          <h3 className="player-label">Your Typing</h3>
+                          <div
+                            className="typing-field"
+                            tabIndex={0}
+                            onKeyDown={handleTypingA}
+                            ref={typingContainerARef}
+                          >
+                            {text.split("").map((char, index) => {
+                              const typedChar = typedTextA[index];
+                              let className = "";
+                              if (typedChar == null) {
+                                className = index === typedTextA.length ? "current-char" : "pending-char";
+                              } else if (typedChar === char) {
+                                className = "correct-char";
+                              } else {
+                                className = "incorrect-char";
+                              }
+                              return (
+                                <span key={index} className={className}>
+                                  {char}
+                                </span>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+
+                      {playerB?.uid === user?.uid && (
+                        <div className="typing-section">
+                          <h3 className="player-label">Your Typing</h3>
+                          <div
+                            className="typing-field"
+                            tabIndex={0}
+                            onKeyDown={handleTypingB}
+                            ref={typingContainerBRef}
+                          >
+                            {text.split("").map((char, index) => {
+                              const typedChar = typedTextB[index];
+                              let className = "";
+                              if (typedChar == null) {
+                                className = index === typedTextB.length ? "current-char" : "pending-char";
+                              } else if (typedChar === char) {
+                                className = "correct-char";
+                              } else {
+                                className = "incorrect-char";
+                              }
+                              return (
+                                <span key={index} className={className}>
+                                  {char}
+                                </span>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="game-start">
+                    {playerA?.uid === user?.uid && (
+                      <button
+                        onClick={startGame}
+                        className="btn btn-start"
+                        disabled={isLoading || !playerB}
+                      >
+                        {isLoading
+                          ? "Starting..."
+                          : playerB
+                          ? "Start Game"
+                          : "Waiting for opponent..."}
                       </button>
                     )}
-                    <button onClick={() => setLobbyId("")} className="button">
-                      Leave Lobby
-                    </button>
-                  </div>
-                </div>
-              ) : gameStarted ? (
-                <div className="game-area">
-                  <div className="game-info">
-                    <h3>Time Left: {timeLeft} seconds</h3>
-                  </div>
-                  <div>
-                    <h5>
-                      Your WPM:{" "}
-                      {playerA?.uid === user?.uid
-                        ? playerA?.wpm || 0
-                        : playerB?.wpm || 0}
-                    </h5>
-                  </div>
-
-                  {playerA?.uid === user?.uid && (
-                    <div className="player">
-                      <h3>Player A (You)</h3>
-                      <div
-                        className="typing-containerr"
-                        tabIndex={0}
-                        onKeyDown={handleTypingA}
-                        ref={typingContainerARef}
-                      >
-                        {text.split("").map((char, index) => {
-                          const typedChar = typedTextA[index];
-                          let className = "";
-                          if (typedChar == null) {
-                            className =
-                              index === typedTextA.length
-                                ? "current"
-                                : "pending";
-                          } else if (typedChar === char) {
-                            className = "correct";
-                          } else {
-                            className = "incorrect";
-                          }
-                          return (
-                            <span key={index} className={className}>
-                              {char}
-                            </span>
-                          );
-                        })}
+                    {playerB?.uid === user?.uid && (
+                      <div className="waiting-message">
+                        <div className="spinner"></div>
+                        <p>Waiting for host to start the game...</p>
                       </div>
-                    </div>
-                  )}
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
 
-                  {playerB?.uid === user?.uid && (
-                    <div className="player">
-                      <h3>Player B (You)</h3>
-                      <div
-                        className="typing-containerr"
-                        tabIndex={0}
-                        onKeyDown={handleTypingB}
-                        ref={typingContainerBRef}
-                      >
-                        {text.split("").map((char, index) => {
-                          const typedChar = typedTextB[index];
-                          let className = "";
-                          if (typedChar == null) {
-                            className =
-                              index === typedTextB.length
-                                ? "current"
-                                : "pending";
-                          } else if (typedChar === char) {
-                            className = "correct";
-                          } else {
-                            className = "incorrect";
-                          }
-                          return (
-                            <span key={index} className={className}>
-                              {char}
-                            </span>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <>
-                  {playerA?.uid === user?.uid && !gameStarted && (
-                    <button
-                      onClick={startGame}
-                      className="button"
-                      disabled={isLoading || !playerB}
-                    >
-                      {isLoading
-                        ? "Starting..."
-                        : playerB
-                        ? "Start Game"
-                        : "Waiting for Player B"}
-                    </button>
-                  )}
-                  {playerB?.uid === user?.uid && (
-                    <p className="waiting">
-                      Waiting for host to start the game...
-                    </p>
-                  )}
-                </>
-              )}
+          {lobbyId && (
+            <div className="chat-panel">
+              <div className="chat-header">
+                <h3>Game Chat</h3>
+              </div>
+              <div className="messages-container">
+                {messages.map((msg) => (
+                  <div
+                    key={msg.id}
+                    className={`message ${msg.senderId === user?.uid ? "sent" : "received"}`}
+                  >
+                    <div className="message-sender">{msg.senderEmail}</div>
+                    <div className="message-content">{msg.text}</div>
+                  </div>
+                ))}
+              </div>
+              <form
+                className="message-form"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  sendMessage();
+                }}
+              >
+                <input
+                  type="text"
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  placeholder="Type your message..."
+                  className="message-input"
+                />
+                <button type="submit" className="send-button">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M22 2L11 13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+              </form>
             </div>
           )}
         </div>
       )}
-            {/* Chat Box */}
-            <div className="chat-container">
-        <div className="chat-messages">
-          {messages.map((msg) => (
-            <div
-              key={msg.id}
-              className={`chat-msg ${msg.senderId === user?.uid ? "own" : ""}`}
-            >
-              <strong>{msg.senderEmail}:</strong> <span>{msg.text}</span>
-            </div>
-          ))}
-        </div>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            sendMessage();
-          }}
-          className="chat-input-form"
-        >
-          <input
-            type="text"
-            placeholder="Type a message..."
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            className="chat-input"
-          />
-          <button type="submit" className="chat-send-btn">
-            Send
-          </button>
-        </form>
-      </div>
-
-      {/* Leave Lobby (with chat cleanup) */}
-      <button
-        onClick={async () => {
-          await cleanupChat();
-          setLobbyId("");
-        }}
-        className="button"
-      >
-        Leave Lobby
-      </button>
     </div>
   );
 };
