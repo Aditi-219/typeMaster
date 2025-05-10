@@ -591,6 +591,13 @@ It's not a bug - it's an undocumented feature. The computer was born to solve pr
     await Promise.all(deletes);
   };
 
+  const messagesEndRef = useRef(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+
   return (
     <div className="multiplayer-page-container">
       {!isLoggedIn ? (
@@ -881,7 +888,7 @@ It's not a bug - it's an undocumented feature. The computer was born to solve pr
           {lobbyId && (
             <div className="chat-panel">
               <div className="chat-header">
-                <h3>Game Chat</h3>
+                <h3>Live Chat</h3>
               </div>
               <div className="messages-container">
                 {messages.map((msg) => (
@@ -895,6 +902,8 @@ It's not a bug - it's an undocumented feature. The computer was born to solve pr
                     <div className="message-content">{msg.text}</div>
                   </div>
                 ))}
+                <div ref={messagesEndRef} />
+
               </div>
               <form
                 className="message-form"

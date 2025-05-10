@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useRef } from 'react';
 import './GameShooting.css';
 
 // Word list remains the same
@@ -17,7 +17,7 @@ const wordsList = [
   "vril", "xyr", "nyx", "qis", "mork", "vox", "zenn", "kyx", "jynx", "zyl", "wryn", "quor", "drax", "vork", "plix", "zurk", "glim", "snor", "flur"
 ];
 
-const alienTypes = ['👽', '👾', '🤖', '🛸', '👹', '👺'];
+const alienTypes = ['👽', '👾', '🤖', '☄️', '👹', '👺','😈','🌑','🛰️','🪐','⭐','🌙',' 🌕 '];
 
 // Modern color scheme
 const colors = {
@@ -38,6 +38,7 @@ const GameShooting = () => {
   const [lives, setLives] = useState(3);
   const [level, setLevel] = useState(1);
   const [levelProgress, setLevelProgress] = useState(0);
+  const inputRef = useRef(null);
 
   const fireLaser = (targetPosition, targetProgress) => {
     const gameArena = document.querySelector('.game-arena');
@@ -304,6 +305,13 @@ useEffect(() => {
     spawnNewWord();
   }, []);
 
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();  // Focus the input field when the component loads
+    }
+  }, []);
+
+
   return (
     <div className="game-container" /*style={{ background: colors.darkSpace }}*/>
       {/* Space video background */}
@@ -405,6 +413,7 @@ useEffect(() => {
       {/* Input field */}
       <div className="input-container">
         <input
+          ref={inputRef}
           type="text"
           value={typedWord}
           onChange={handleTyping}

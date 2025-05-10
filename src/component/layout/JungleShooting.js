@@ -1,15 +1,46 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useRef } from 'react';
 import './JungleShooting.css';
 
-const wordsList = [
-  "tree", "vine", "leaf", "jungle", "rainforest", "parrot", "monkey", "tiger",
-  "elephant", "snake", "gorilla", "camouflage", "palm", "forest", "shrub",
-  "flower", "bamboo", "waterfall", "safari", "wild", "tropical", "coconut", 
-  "mango", "banana", "chimpanzee", "panda", "zebra", "leopard", "antelope",
-  "gorilla", "cheetah", "lion", "rhino", "bird", "butterfly", "spider", "insect"
+const wordsList =[
+  "tree", "vine", "leaf", "jungle", "rainforest", "canopy", "parrot", "monkey", 
+  "tiger", "elephant", "snake", "gorilla", "camouflage", "palm", "forest", 
+  "shrub", "flower", "bamboo", "waterfall", "safari", "wild", "tropical", 
+  "coconut", "mango", "banana", "chimpanzee", "panda", "zebra", "leopard", 
+  "antelope", "cheetah", "lion", "rhino", "bird", "butterfly", "spider", 
+  "insect", "toucan", "jaguar", "liana", "underbrush", "mosquito", "beetle", 
+  "tarantula", "frog", "reptile", "crocodile", "lizard", "bush", "fern", 
+  "moss", "humidity", "rain", "thunder", "lightning", "fog", "swamp", 
+  "creek", "river", "mud", "roots", "climber", "orchid", "wildlife", 
+  "predator", "herbivore", "nocturnal", "terrain", "expedition", "tribe", 
+  "bat", "sloth", "panther", "bison", "armadillo", "anteater", "tapir", 
+  "deer", "waterfall", "rainstorm", "treetop", "jungle gym", "bushfire", 
+  "jungle cat", "nightshade", "cypress", "cedar", "safari", "monsoon", 
+  "leafhopper", "chameleon", "termites", "skunk", "tortoise", "ants", "woodpecker", 
+  "basil", "sunlight", "fungus", "mangrove", "hyacinth", "sunshine", "bat cave", 
+  "tropical fruit", "blue morpho", "black panther", "leech", "jungle trail", 
+  "wild boar", "climbing ivy", "bananas", "poison ivy", "mudslide", "saguaro", 
+  "dewdrops", "tropical fish", "camouflage", "safari tour", "wild orangutan", 
+  "fossa", "solitary", "amphibian", "shaman", "ancient trees", "jungle tribe", 
+  "pitcher plant", "algae", "sugarcane", "wilderness", "wildflower", "baboons", 
+  "ivory", "jungle drums", "wild hunts", "pitcher vines", "cayman", "wildberries", 
+  "stone path", "forest floor", "saber-tooth tiger", "gecko", "fruit bat", "elephant grass", 
+  "wild boar", "snakeskin", "ivy-covered", "jungle mist", "rainforest canopy", "sunset jungle", 
+  "vultures", "gecko", "forest canopy", "wild stream", "tropical storm", "fishing nets", 
+  "frostbite", "jungle fever", "bamboo grove", "rainy season", "tropical birds", "rainforest leaves", 
+  "hummingbird", "swarm", "leafy vines", "gibbon", "armadillo", "rainforest hike", "woodland", 
+  "jungle path", "thick undergrowth", "swooping owl", "beehive", "giraffe", "poison dart frog", 
+  "jackfruit", "hardwood", "cocoa", "coffee", "cocoa pods", "leaf cutter", "water lilies", 
+  "flamingo", "cliffside", "palm fronds", "baobab tree", "monsoon rain", "water hole", "forest fire", 
+  "camouflage clothing", "jungle survival", "forest retreat", "sundew", "black mamba", "tarzan", 
+  "shamanic", "jungle trek", "sacred grove", "night in the jungle", "birdsong", "nature sounds"
 ];
 
-const jungleAnimals = ['🐒', '🦜', '🐍', '🦁', '🐘', '🐅'];
+
+const jungleAnimals = [
+  '🌴', '🌲', '🌳', '🌿', '🍃', '🍂', '🪵', '🌱', '🍄', // Jungle Nature & Plants
+  '🐒', '🐵', '🐍', '🐅', '🐆', '🦧', '🐘', '🦓', '🦜', '🐊', '🦎', '🦋', '🕷️', // Jungle Animals
+   '🌧️', '⚡', '🦁', '💧', '🔥', '🪨', '🕸️' // Jungle Weather & Environment
+];
 
 // Updated jungle theme colors
 const colors = {
@@ -30,6 +61,7 @@ const JungleShooting = () => {
   const [lives, setLives] = useState(3);
   const [level, setLevel] = useState(1);
   const [levelProgress, setLevelProgress] = useState(0);
+  const inputRef = useRef(null);
 
   const fireLaser = (targetPosition, targetProgress) => {
     const gameArena = document.querySelector('.game-arena');
@@ -225,6 +257,12 @@ const JungleShooting = () => {
     spawnNewWord();
   }, []);
 
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();  // Focus the input field when the component loads
+    }
+  }, []);
+
   return (
     <div className="jungle-game-root">
       {/* Game Container */}
@@ -286,6 +324,7 @@ const JungleShooting = () => {
   
         <div className="input-container">
           <input
+            ref={inputRef}
             type="text"
             value={typedWord}
             onChange={handleTyping}
