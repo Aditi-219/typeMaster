@@ -649,7 +649,7 @@ const TypingArea = () => {
 
   return (
     <div className="container">
-      <div className="auth-container">
+      <div className="auth-container-main">
         {showAuthButton && !isLoggedIn && (
           <button
             onClick={() => setShowLogin(true)}
@@ -672,7 +672,7 @@ const TypingArea = () => {
                 ×
               </button>
 
-              <h2>{showSignup ? "Create Account" : "Welcome Back"}</h2>
+              <h2 style={{ color: "black" }}>{showSignup ? "Create Account" : "Welcome Back"}</h2>
 
               <form
                 onSubmit={showSignup ? handleEmailSignup : handleEmailLogin}
@@ -749,22 +749,10 @@ const TypingArea = () => {
             </div>
           </div>
         )}
-
-
-        <div className=" options timer-options word-options">
-          {["words", "punctuation", "numbers"].map((option) => (
-            <button
-              key={option}
-              onClick={() => handleOptionChange(option)}
-              className={selectedOptions.includes(option) ? "active" : ""}
-            >
-              {option === "words" && "Words"}
-              {option === "punctuation" && "Punctuation"}
-              {option === "numbers" && "Numbers"}
-            </button>
-          ))}
-        </div>
       </div>
+
+        
+      {/* </div> */}
       {showFocusButton && (
         <button onClick={handleFocusClick} className="focus-button">
           🔍 Click here to focus
@@ -786,6 +774,19 @@ const TypingArea = () => {
           </button>
         ))}
       </div>
+      <div className=" options timer-options word-options">
+          {["words", "punctuation", "numbers"].map((option) => (
+            <button
+              key={option}
+              onClick={() => handleOptionChange(option)}
+              className={selectedOptions.includes(option) ? "active" : ""}
+            >
+              {option === "words" && "Words"}
+              {option === "punctuation" && "Punctuation"}
+              {option === "numbers" && "Numbers"}
+            </button>
+          ))}
+        </div>
       
       {isLoggedIn && user && (
         <div className="user-controls-container">

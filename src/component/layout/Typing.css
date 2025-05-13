@@ -185,7 +185,7 @@ html, body {
 .word-options{
   background: #151410; 
   border-radius: 10px;
-  width: 90%;
+  width: 25%;
   padding: 5rem;
   margin-top: 23px;
   padding-top: 5px;
@@ -418,7 +418,7 @@ background: #45a049;
 }
 
 
-.auth-container {
+.auth-container-main {
   position: relative;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -577,10 +577,10 @@ background: #45a049;
   font-size: 14px;
 }
 
-.auth-container {
+.auth-container-main {
   position: absolute;
-  top: 20px;
-  right: 20px;
+  top: 28px;
+  right: 30px;
 }
 
 .horizontal-user-panel {
