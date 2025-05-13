@@ -54,6 +54,20 @@ Sometimes it pays to stay in bed on Monday, rather than spending the rest of the
 The best thing about a boolean is even if you are wrong, you are only off by a bit.
 If debugging is the process of removing software bugs, then programming must be the process of putting them in.
 It's not a bug - it's an undocumented feature. The computer was born to solve problems that did not exist before.
+On January 1st, 2024, at exactly 06:45:00 AM, a new user named megha_singh07 registered on the system using the email megha.singh07@gmail.com and set her password to Secure#Pass1234. 
+Her contact number was entered as +91-98765-12345, and her backup contact was listed as +91-99888-77665. 
+Her full address read: “C-204, Second Floor, Galaxy Apartments, Sector-22, Noida, U.P. – 201301.”
+ She provided her PAN number as BNZPS1234K and her Aadhaar number as 2345-6789-1011. 
+ The system assigned her a unique Customer ID: CUS-0001273-IN and logged the signup request in the backend log file user_reg_2024-01-01.log.
+ The registration form had 8 fields: name, email, password, phone, backup phone, address, PAN, and Aadhaar.
+ All were validated using regex patterns like ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-z]{2,}$ for email, and ^[A-Z]{5}[0-9]{4}[A-Z]{1}$ for PAN. 
+ After validation, a welcome email was triggered via SMTP at 06:45:33 AM, with the subject line: “Welcome to SafeStore, Megha!” and from-address: support@safestore.in.
+ At 07:00:12 AM, Megha logged in for the first time. The login API /api/v1/auth/login was hit with headers like Content-Type: application/json, and the payload { "email": "megha.singh07@gmail.com", "password": "Secure#Pass1234" }.
+ On successful login, the system generated a JWT token starting with eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9... and set the token as an HttpOnly cookie with expiry: 2024-02-01T07:00:12Z. Her session ID was logged as SID-8845129072@!.
+ By 08:12:59 AM, Megha had browsed 14 different products. Product IDs included PROD-2024-001, PROD-2024-002, all the way to PROD-2024-014. 
+ She added 3 items to her cart: a “Logitech MX Master 3S” priced at ₹7,499.00, an “HP M24f Monitor” priced at ₹11,799.50, and a “boAt Rockerz 255 Pro+” at ₹1,999.00. 
+ The cart total was ₹21,297.50, plus a GST of ₹3,833.55, totaling ₹25,131.05. 
+  At checkout, her billing address was auto-filled using the previously stored info, and the payment mode chosen was “Credit Card – Visa ending in 1234”.
 `;
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
@@ -69,8 +83,8 @@ It's not a bug - it's an undocumented feature. The computer was born to solve pr
   const [isLobbyValid, setIsLobbyValid] = useState(false);
   const [lobbyInput, setLobbyInput] = useState("");
   const [shouldJoinLobby, setShouldJoinLobby] = useState(false);
-  const [gameTime] = useState(25);
-  const [timeLeft, setTimeLeft] = useState(25);
+  const [gameTime] = useState(60);
+  const [timeLeft, setTimeLeft] = useState(60);
   const [gameEnded, setGameEnded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const typingContainerARef = React.useRef(null);
@@ -87,7 +101,7 @@ It's not a bug - it's an undocumented feature. The computer was born to solve pr
     const sentences = largeSampleText.split('. ').filter(s => s.trim().length > 0);
     
     // Determine how many sentences to include (between 3-6)
-    const sentenceCount = Math.floor(Math.random() * 4) + 3;
+    const sentenceCount = Math.floor(Math.random() * 1.2) + 3;
     
     // Select random sentences
     let selectedSentences = [];
