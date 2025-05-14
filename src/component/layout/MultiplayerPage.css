@@ -614,7 +614,7 @@ h3 {
   transition: border-color 0.2s, box-shadow 0.2s;
   background-color: var(--bg-card);
   color: var(--text-primary);
-  width: 20rem;
+  width: 23rem;
 }
 
 .message-input:focus {
