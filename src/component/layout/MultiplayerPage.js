@@ -100,7 +100,7 @@ const MultiplayerPage = () => {
     const sentences = largeSampleText.split('. ').filter(s => s.trim().length > 0);
     
     // Determine how many sentences to include (between 3-6)
-    const sentenceCount = Math.floor(Math.random() * 1.2) + 3;
+    const sentenceCount = 5;
     
     // Select random sentences
     let selectedSentences = [];
