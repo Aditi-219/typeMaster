@@ -32,27 +32,27 @@ import { MessageCircle, Send, User } from "lucide-react";
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
 const MultiplayerPage = () => {
-  const largeSampleText = `The quick brown fox jumps over the lazy dog. This sentence contains all the letters in the English alphabet.
+  const largeSampleText = `The quick brown fox jumps over the lazy dog.This sentence contains all the letters in the English alphabet.
 Programming is the process of creating a set of instructions that tell a computer how to perform a task.
-React is a JavaScript library for building user interfaces. It is maintained by Facebook and a community of individual developers and companies.
+React is a JavaScript library for building user interfaces.It is maintained by Facebook and a community of individual developers and companies.
 TypeScript is a strongly typed programming language that builds on JavaScript giving you better tooling at any scale.
 The best way to learn to code is by actually coding.Practice makes perfect when it comes to programming.
-Algorithms are stepbystep procedures for calculations. Data structures are ways to organize and store data.
-Clean code is code that is easy to understand and easy to change. Always write code as if the person who ends up maintaining it is a violent psychopath who knows where you live.
-The only way to go fast is to go well. Quality is never an accident it is always the result of intelligent effort.
-JavaScript is the worlds most popular programming language. It is the programming language of the Web.
-Computer science is no more about computers than astronomy is about telescopes. Its about solving problems.
-The most disastrous thing that you can ever learn is your first programming language. The second one always seems easier.
-Debugging is twice as hard as writing the code in the first place. Therefore if you write the code as cleverly as possible you are by definition not smart enough to debug it.
+Algorithms are stepbystep procedures for calculations.Data structures are ways to organize and store data.
+Clean code is code that is easy to understand and easy to change.Always write code as if the person who ends up maintaining it is a violent psychopath who knows where you live.
+The only way to go fast is to go well.Quality is never an accident it is always the result of intelligent effort.
+JavaScript is the worlds most popular programming language.It is the programming language of the Web.
+Computer science is no more about computers than astronomy is about telescopes.Its about solving problems.
+The most disastrous thing that you can ever learn is your first programming language.The second one always seems easier.
+Debugging is twice as hard as writing the code in the first place.Therefore if you write the code as cleverly as possible you are by definition not smart enough to debug it.
 There are two ways of constructing a software design. One way is to make it so simple that there are obviously no deficiencies and the other way is to make it so complicated that there are no obvious deficiencies.
 Measuring programming progress by lines of code is like measuring aircraft building progress by weight.
 The most important property of a program is whether it accomplishes the intention of its user.
-Any fool can write code that a computer can understand. Good programmers write code that humans can understand.
-First solve the problem. Then write the code. Programming isnt about what you know its about what you can figure out.
+Any fool can write code that a computer can understand.Good programmers write code that humans can understand.
+First solve the problem.Then write the code.Programming isnt about what you know its about what you can figure out.
 Sometimes it pays to stay in bed on Monday rather than spending the rest of the week debugging Mondays code.
 The best thing about a boolean is even if you are wrong you are only off by a bit.
 If debugging is the process of removing software bugs then programming must be the process of putting them in.
-Its not a bug  its an undocumented feature. The computer was born to solve problems that did not exist before.
+Its not a bug  its an undocumented feature.The computer was born to solve problems that did not exist before.
 On January 1st 2024 at exactly 064500 AM a new user named meghasingh07 registered on the system using the email meghasingh07gmailcom and set her password to SecurePass1234.
 Her contact number was entered as 919876512345 and her backup contact was listed as 919988877665.
 Her full address read C204 Second Floor Galaxy Apartments Sector22 Noida UP 201301.
@@ -61,12 +61,12 @@ The system assigned her a unique Customer ID CUS0001273IN and logged the signup 
 The registration form had 8 fields name email password phone backup phone address PAN and Aadhaar.
 All were validated using regex patterns like alphanumeric for email and alphanumeric for PAN.
 After validation a welcome email was triggered via SMTP at 064533 AM with the subject line Welcome to SafeStore Megha and fromaddress supportsafestorein.
-At 070012 AM Megha logged in for the first time. The login API apiviauthlogin was hit with headers like ContentType applicationjson and the payload email meghasingh07gmailcom password SecurePass1234.
+At 070012 AM Megha logged in for the first time.The login API apiviauthlogin was hit with headers like ContentType applicationjson and the payload email meghasingh07gmailcom password SecurePass1234.
 On successful login the system generated a JWT token starting with eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9 and set the token as an HttpOnly cookie with expiry 20240201T070012Z. Her session ID was logged as SID8845129072.
-By 081259 AM Megha had browsed 14 different products. Product IDs included PROD2024001 PROD2024002 all the way to PROD2024014.
+By 081259 AM Megha had browsed 14 different products.Product IDs included PROD2024001 PROD2024002 all the way to PROD2024014.
 She added 3 items to her cart a Logitech MX Master 3S priced at 749900 an HP M24f Monitor priced at 1179950 and a boAt Rockerz 255 Pro priced at 199900.
 The cart total was 2129750 plus a GST of 383355 totaling 2513105.
-At checkout her billing address was autofilled using the previously stored info and the payment mode chosen was Credit Card  Visa ending in 1234.`;
+At checkout her billing address was autofilled using the previously stored info and the payment mode chosen was Credit Card Visa ending in 1234.`;
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
