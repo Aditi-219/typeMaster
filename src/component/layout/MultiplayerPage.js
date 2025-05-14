@@ -97,19 +97,23 @@ const MultiplayerPage = () => {
   const sampleText = "The quick brown fox jumped over the lazy dog.";
   const getRandomTextSegment = () => {
     // Split the large text into sentences
-    const sentences = largeSampleText.split('. ').filter(s => s.trim().length > 0);
-    
+    const sentences = largeSampleText
+      .split(". ")
+      .filter((s) => s.trim().length > 0);
+
     // Determine how many sentences to include (between 3-6)
-    const sentenceCount = 5;
-    
+    const sentenceCount = 3;
+
     // Select random sentences
     let selectedSentences = [];
     for (let i = 0; i < sentenceCount; i++) {
       const randomIndex = Math.floor(Math.random() * sentences.length);
-      selectedSentences.push(sentences[randomIndex] + (i < sentenceCount - 1 ? '. ' : '.'));
+      selectedSentences.push(
+        sentences[randomIndex] + (i < sentenceCount - 1 ? ". " : ".")
+      );
     }
-    
-    return selectedSentences.join('');
+
+    return selectedSentences.join("");
   };
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -149,36 +153,35 @@ const MultiplayerPage = () => {
     if (gameStarted) {
       // Use requestAnimationFrame for better timing
       requestAnimationFrame(() => {
-        const container = 
-          playerA?.uid === user?.uid 
-            ? typingContainerARef.current 
+        const container =
+          playerA?.uid === user?.uid
+            ? typingContainerARef.current
             : typingContainerBRef.current;
-        
+
         if (container) {
           container.focus();
           // Ensure the container is scrollable and visible
-          container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          container.scrollIntoView({ behavior: "smooth", block: "nearest" });
         }
       });
     }
   }, [gameStarted, playerA, playerB, user]);
 
-
   useEffect(() => {
     if (!lobbyId) return;
-  
+
     let unsubscribe = null;
-  
+
     const checkAndSubscribe = async (attempt = 1) => {
       const lobbyRef = doc(db, "lobbies", lobbyId);
       const lobbySnap = await getDoc(lobbyRef);
-  
+
       if (lobbySnap.exists()) {
         const data = lobbySnap.data();
-  
+
         const isPlayer =
           data.playerA?.uid === user?.uid || data.playerB?.uid === user?.uid;
-  
+
         if (!isPlayer) {
           if (attempt === 1) {
             setTimeout(() => checkAndSubscribe(2), 0);
@@ -188,25 +191,25 @@ const MultiplayerPage = () => {
           }
           return;
         }
-  
+
         unsubscribe = onSnapshot(lobbyRef, (doc) => {
           if (doc.exists()) {
             const liveData = doc.data();
-  
+
             setText(liveData.text);
             setPlayerA(liveData.playerA);
             setPlayerB(liveData.playerB);
             setGameStarted(liveData.gameStarted);
             setCountdown(liveData.countdown);
             setGameEnded(liveData.gameEnded);
-  
+
             if (liveData.playerA?.uid === user?.uid) {
               setTypedTextA(liveData.playerA?.typedText || "");
             }
             if (liveData.playerB?.uid === user?.uid) {
               setTypedTextB(liveData.playerB?.typedText || "");
             }
-  
+
             setLobbyError(null);
             setIsLobbyValid(true);
           } else {
@@ -219,16 +222,13 @@ const MultiplayerPage = () => {
         setLobbyId("");
       }
     };
-  
+
     checkAndSubscribe();
-  
+
     return () => {
       if (unsubscribe) unsubscribe();
     };
   }, [lobbyId, user?.uid]);
-  
-    
-  
 
   // Handle the Create Lobby Button
   const createLobby = async () => {
@@ -239,7 +239,7 @@ const MultiplayerPage = () => {
       typedText: "",
       wpm: 0,
     };
-  
+
     const lobbyRef = doc(db, "lobbies", newLobbyId);
     await setDoc(lobbyRef, {
       playerA: player,
@@ -248,7 +248,7 @@ const MultiplayerPage = () => {
       gameStarted: false,
       gameEnded: false,
       canJoin: true,
-      playerCount: 1 // Track player count
+      playerCount: 1, // Track player count
     });
     setLobbyId(newLobbyId);
   };
@@ -256,30 +256,32 @@ const MultiplayerPage = () => {
   // In your joinLobby function:
   const joinLobby = async () => {
     if (!lobbyId || lobbyId.length < 6) return;
-  
+
     const lobbyRef = doc(db, "lobbies", lobbyId);
     const lobbyDoc = await getDoc(lobbyRef);
-  
+
     if (lobbyDoc.exists()) {
       const data = lobbyDoc.data();
 
-       let lobbyData = lobbyDoc.data();
+      let lobbyData = lobbyDoc.data();
 
-  
       // Prevent joining if game started or lobby full
       if (data.gameStarted || !data.canJoin) {
         setLobbyError("Game has already started. Cannot join now.");
         return;
       }
 
-      
       // Check if user is already in lobby
       const isPlayerA = lobbyData.playerA?.uid === user.uid;
       const isPlayerB = lobbyData.playerB?.uid === user.uid;
 
-  
       // Check if current user is already in the lobby
-      if (!isPlayerA && !isPlayerB && !lobbyData.playerB && lobbyData.playerCount < 2) {
+      if (
+        !isPlayerA &&
+        !isPlayerB &&
+        !lobbyData.playerB &&
+        lobbyData.playerCount < 2
+      ) {
         const player = {
           uid: user.uid,
           email: user.email,
@@ -289,32 +291,31 @@ const MultiplayerPage = () => {
         await updateDoc(lobbyRef, {
           playerB: player,
           canJoin: false,
-          playerCount: 2 // Update player count
+          playerCount: 2, // Update player count
         });
 
-      
-  let updated = false;
-  while (!updated) {
-    const snapshot = await getDoc(lobbyRef);
-    const updatedData = snapshot.data();
-    if (updatedData?.playerB?.uid === user.uid) {
-      updated = true;
-      lobbyData = updatedData; // 👈 update our local data too
-    } else {
-      await new Promise(resolve => setTimeout(resolve, 300));
-    }
-  }
+        let updated = false;
+        while (!updated) {
+          const snapshot = await getDoc(lobbyRef);
+          const updatedData = snapshot.data();
+          if (updatedData?.playerB?.uid === user.uid) {
+            updated = true;
+            lobbyData = updatedData; // 👈 update our local data too
+          } else {
+            await new Promise((resolve) => setTimeout(resolve, 300));
+          }
+        }
 
-  if (
-  lobbyData.playerA?.uid !== user.uid &&
-  lobbyData.playerB?.uid !== user.uid
-) {
-  setLobbyError("You are not authorized to view this lobby");
-  setLobbyId(""); // Reset lobby
-  return;
-}
+        if (
+          lobbyData.playerA?.uid !== user.uid &&
+          lobbyData.playerB?.uid !== user.uid
+        ) {
+          setLobbyError("You are not authorized to view this lobby");
+          setLobbyId(""); // Reset lobby
+          return;
+        }
       }
-  
+
       if (!data.playerB) {
         const player = {
           uid: user.uid,
@@ -429,27 +430,32 @@ const MultiplayerPage = () => {
   // Modify handleTypingA and handleTypingB to update Firestore
   const handleTypingA = async (e) => {
     if (!gameStarted) return;
-
+    
+    // Prevent default only after checking our conditions
     e.preventDefault();
+    
     const key = e.key;
-
-    let newTypedText = typedTextA;
-    console.log("Key:", key);
-
-    if (key.length === 1 && key.match(/^[a-zA-Z0-9 .,!?'"-]$/)) {
-      newTypedText += key;
-    } else if (key === "Backspace") {
-      newTypedText = newTypedText.slice(0, -1);
+    console.log("Key pressed:", key); // Debug logging
+  
+    // Handle all printable characters
+    if (key.length === 1 || key === "Backspace" || key === " ") {
+      let newTypedText = typedTextA;
+      
+      if (key === "Backspace") {
+        newTypedText = typedTextA.slice(0, -1);
+      } else {
+        newTypedText += key;
+      }
+  
+      setTypedTextA(newTypedText);
+  
+      // Update Firestore
+      const lobbyRef = doc(db, "lobbies", lobbyId);
+      await updateDoc(lobbyRef, {
+        "playerA.typedText": newTypedText,
+        "playerA.wpm": calculateWPM(newTypedText, gameTime - timeLeft),
+      });
     }
-
-    setTypedTextA(newTypedText);
-
-    // Update Firestore
-    const lobbyRef = doc(db, "lobbies", lobbyId);
-    await updateDoc(lobbyRef, {
-      "playerA.typedText": newTypedText,
-      "playerA.wpm": calculateWPM(newTypedText, gameTime - timeLeft),
-    });
   };
 
   const handleTypingB = async (e) => {
@@ -557,14 +563,21 @@ const MultiplayerPage = () => {
 
   useEffect(() => {
     if (gameStarted) {
-      // Small timeout to ensure the container is rendered
-      setTimeout(() => {
-        if (playerA?.uid === user?.uid && typingContainerARef.current) {
-          typingContainerARef.current.focus();
-        } else if (playerB?.uid === user?.uid && typingContainerBRef.current) {
-          typingContainerBRef.current.focus();
-        }
-      }, 100);
+      const container =
+        playerA?.uid === user?.uid
+          ? typingContainerARef.current
+          : typingContainerBRef.current;
+
+      if (container) {
+        // Add slight delay to ensure DOM is ready
+        setTimeout(() => {
+          container.focus();
+          // Force focus if needed
+          if (document.activeElement !== container) {
+            container.focus({ preventScroll: true });
+          }
+        }, 100);
+      }
     }
   }, [gameStarted, playerA, playerB, user]);
 
@@ -657,15 +670,17 @@ const MultiplayerPage = () => {
     const trimmed = newMessage.trim();
     if (!trimmed || !user?.uid || !lobbyId) return;
     const lobbyRef = doc(db, "lobbies", lobbyId);
-  const lobbyDoc = await getDoc(lobbyRef);
-  
-  if (!lobbyDoc.exists()) return;
-  
-  const lobbyData = lobbyDoc.data();
-  if (lobbyData.playerA.uid !== user.uid && 
-      (!lobbyData.playerB || lobbyData.playerB.uid !== user.uid)) {
-    return; // User is not in this lobby
-  }
+    const lobbyDoc = await getDoc(lobbyRef);
+
+    if (!lobbyDoc.exists()) return;
+
+    const lobbyData = lobbyDoc.data();
+    if (
+      lobbyData.playerA.uid !== user.uid &&
+      (!lobbyData.playerB || lobbyData.playerB.uid !== user.uid)
+    ) {
+      return; // User is not in this lobby
+    }
     const messagesRef = collection(db, "lobbies", lobbyId, "messages");
     await addDoc(collection(db, "lobbies", lobbyId, "messages"), {
       text: trimmed,
@@ -700,7 +715,6 @@ const MultiplayerPage = () => {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
-
 
   return (
     <div className="multiplayer-page-container">
@@ -903,8 +917,20 @@ const MultiplayerPage = () => {
                           <div
                             className="typing-field"
                             tabIndex={0}
-                            onKeyDown={handleTypingA}
-                            ref={typingContainerARef}
+                            onKeyDown={
+                              playerA?.uid === user?.uid
+                                ? handleTypingA
+                                : handleTypingB
+                            }
+                            ref={
+                              playerA?.uid === user?.uid
+                                ? typingContainerARef
+                                : typingContainerBRef
+                            }
+                            // Add these props
+                            autoFocus
+                            onFocus={(e) => e.target.focus()}
+                            style={{ outline: "none" }}
                           >
                             {text.split("").map((char, index) => {
                               const typedChar = typedTextA[index];
@@ -1007,7 +1033,6 @@ const MultiplayerPage = () => {
                   </div>
                 ))}
                 <div ref={messagesEndRef} />
-
               </div>
               <form
                 className="message-form"
