@@ -166,18 +166,26 @@ Her full address read: “C-204, Second Floor, Galaxy Apartments, Sector-22, Noi
 
   useEffect(() => {
     if (!lobbyId) return;
+  
     const unsubscribe = onSnapshot(doc(db, "lobbies", lobbyId), (doc) => {
       if (doc.exists()) {
         const data = doc.data();
-        
-        // Check if current user is authorized to view this lobby
-        if (data.playerA?.uid !== user?.uid && 
-            (data.playerB?.uid !== user?.uid)) {
-          setLobbyError("You are not authorized to view this lobby");
+  
+        const isPlayer =
+          data.playerA?.uid === user?.uid || data.playerB?.uid === user?.uid;
+  
+        if (!isPlayer) {
+          setLobbyError("wait while..");
           setLobbyId(""); // Reset lobby
+  
+          // 🔁 Retry after a short delay
+          setTimeout(() => {
+            setLobbyId(lobbyId); // Try joining again
+          }, 1000); // retry after 2 seconds
+  
           return;
         }
-        
+  
         setText(data.text);
         setPlayerA(data.playerA);
         setPlayerB(data.playerB);
@@ -185,7 +193,6 @@ Her full address read: “C-204, Second Floor, Galaxy Apartments, Sector-22, Noi
         setCountdown(data.countdown);
         setGameEnded(data.gameEnded);
   
-        // Update typed text from Firestore
         if (data.playerA?.uid === user?.uid) {
           setTypedTextA(data.playerA?.typedText || "");
         }
@@ -204,8 +211,10 @@ Her full address read: “C-204, Second Floor, Galaxy Apartments, Sector-22, Noi
         setIsLobbyValid(false);
       }
     });
+  
     return () => unsubscribe();
   }, [lobbyId, user?.uid]);
+  
 
   // Handle the Create Lobby Button
   const createLobby = async () => {
