@@ -101,7 +101,7 @@ At checkout her billing address was autofilled using the previously stored info 
     const words = largeSampleText.split(/\s+/).filter(word => word.length > 0);
     
     // Determine how many words to include (you can make this random if you want)
-    const wordCount = 80; // For example, get 50 words
+    const wordCount = 100; // For example, get 50 words
     
     // Ensure we don't try to get more words than exist in the text
     const maxStartIndex = Math.max(0, words.length - wordCount);
