@@ -202,7 +202,8 @@ h3 {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0 0 30rem 0;
+  /* padding: 0 0 30rem 0; */
+  padding-bottom: 30rem; 
   animation: fade-in 0.5s ease-out;
 }
 
@@ -271,6 +272,7 @@ h3 {
   display: flex;
   flex-direction: column;
   height: 100%;
+  padding-bottom: 30rem;
   animation: slide-up 0.5s ease-out;
 }
 
