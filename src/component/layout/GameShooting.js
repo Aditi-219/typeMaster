@@ -321,9 +321,9 @@ useEffect(() => {
       muted
       loop
       playsInline
-      //preload="auto"
+      preload="auto"
     >
-      <source src="/space_bg.mp4" type="video/mp4" />
+      <source src="/Space_bg.mp4" type="video/mp4" />
       Your browser does not support the video tag.
     </video>
       {/* Nebula background effect */}
