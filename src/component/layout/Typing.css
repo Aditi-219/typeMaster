@@ -172,9 +172,10 @@ html, body {
   flex-direction: column;
 }
 .options-container {
+  max-width: 1200px;
   display: flex; 
   justify-content: space-between; 
-  gap: 700px; 
+  gap: 39rem; 
   background-color: #48434313;
   padding: 10px;
   border-radius: 20px;
