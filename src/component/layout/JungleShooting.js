@@ -289,9 +289,21 @@ const JungleShooting = () => {
             </div>
             <div className="stat">
               <span>LEVEL</span>
-              <div className="level-bar">
+              {/* <div className="level-bar">
                 <div className="level-fill" style={{ width: `${levelProgress * 100}%` }}></div>
+              </div> */}
+              <div className="level-meter">
+              <div className="level-number">{level}</div>
+              <div className="level-bar">
+                <div 
+                  className="level-fill" 
+                  style={{ 
+                    width: `${levelProgress * 100}%`
+                 // background: `linear-gradient(to right, ${colors.electricBlue}, ${colors.neonPink})`  
+                  }}></div>
+                
               </div>
+            </div>
             </div>
             <div className="stat">
               <span>LIVES</span>
