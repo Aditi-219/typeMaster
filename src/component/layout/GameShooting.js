@@ -10,8 +10,8 @@ const wordsList = [
   "ion", "warp", "jump", "gate", "shield", "sensor", "antenna", "beacon", "transit", "thrust", "vector", "delta-v", "alien", "ufo", "et", "grays", "nordic",
   "reptoid", "hybrid", "abduct", "probe", "mothership", "saucer", "crash", "coverup", "artifact", "ancient", "visitor", "invader", "colonist", "observer", "entity",
   "specimen", "autopsy", "signal", "contact", "message", "warning", "harvest", "hybrid", "cloak", "scan", "phaser", "stun", "beam", "teleport", "tractor", "shield",
-  "cloak", "hologram", "android", "cyborg", "AI", "drone", "nanobot", "stasis", "cryo", "FTL", "warp", "jump", "gate", "dimension", "tesseract", "singularity",
-  "quantum", "plasma", "ion", "flux", "darkmatter", "antimatter", "gravity", "tachyon", "zero-g", "vacuum", "cosmic", "stellar", "lunar", "solar", "phase", "axis",
+  "cloak", "hologram", "android", "cyborg", "drone", "nanobot", "stasis", "cryo", "warp", "jump", "gate", "dimension", "tesseract", "singularity",
+  "quantum", "plasma", "ion", "flux", "darkmatter", "antimatter", "gravity", "tachyon", "vacuum", "cosmic", "stellar", "lunar", "solar", "phase", "axis",
   "core", "dust", "gas", "ion", "flux", "field", "pulse", "burst", "flare", "wave", "rift", "anomaly", "extraterrestrial", "interstellar", "astronaut", "cosmonaut",
   "constellation", "spaceshuttle", "lightspeed", "parsec", "telepathy", "exoplanet", "wormhole", "eventhorizon", "singularity", "hypersleep", "cryostasis","zog",
   "vril", "xyr", "nyx", "qis", "mork", "vox", "zenn", "kyx", "jynx", "zyl", "wryn", "quor", "drax", "vork", "plix", "zurk", "glim", "snor", "flur"
