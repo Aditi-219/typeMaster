@@ -169,13 +169,22 @@ Her full address read: “C-204, Second Floor, Galaxy Apartments, Sector-22, Noi
     const unsubscribe = onSnapshot(doc(db, "lobbies", lobbyId), (doc) => {
       if (doc.exists()) {
         const data = doc.data();
+        
+        // Check if current user is authorized to view this lobby
+        if (data.playerA?.uid !== user?.uid && 
+            (data.playerB?.uid !== user?.uid)) {
+          setLobbyError("You are not authorized to view this lobby");
+          setLobbyId(""); // Reset lobby
+          return;
+        }
+        
         setText(data.text);
         setPlayerA(data.playerA);
         setPlayerB(data.playerB);
         setGameStarted(data.gameStarted);
         setCountdown(data.countdown);
         setGameEnded(data.gameEnded);
-
+  
         // Update typed text from Firestore
         if (data.playerA?.uid === user?.uid) {
           setTypedTextA(data.playerA?.typedText || "");
@@ -183,7 +192,7 @@ Her full address read: “C-204, Second Floor, Galaxy Apartments, Sector-22, Noi
         if (data.playerB?.uid === user?.uid) {
           setTypedTextB(data.playerB?.typedText || "");
         }
-
+  
         setLobbyError(null);
         setIsLobbyValid(true);
       } else {
@@ -196,7 +205,7 @@ Her full address read: “C-204, Second Floor, Galaxy Apartments, Sector-22, Noi
       }
     });
     return () => unsubscribe();
-  }, [lobbyId]);
+  }, [lobbyId, user?.uid]);
 
   // Handle the Create Lobby Button
   const createLobby = async () => {
@@ -207,16 +216,16 @@ Her full address read: “C-204, Second Floor, Galaxy Apartments, Sector-22, Noi
       typedText: "",
       wpm: 0,
     };
-
+  
     const lobbyRef = doc(db, "lobbies", newLobbyId);
     await setDoc(lobbyRef, {
       playerA: player,
       playerB: null,
       text: getRandomTextSegment(),
-      // countdown: 3,
       gameStarted: false,
       gameEnded: false,
-      canJoin: true, // Add this field to track join status
+      canJoin: true,
+      playerCount: 1 // Track player count
     });
     setLobbyId(newLobbyId);
   };
@@ -224,19 +233,34 @@ Her full address read: “C-204, Second Floor, Galaxy Apartments, Sector-22, Noi
   // In your joinLobby function:
   const joinLobby = async () => {
     if (!lobbyId || lobbyId.length < 6) return;
-
+  
     const lobbyRef = doc(db, "lobbies", lobbyId);
     const lobbyDoc = await getDoc(lobbyRef);
-
+  
     if (lobbyDoc.exists()) {
       const data = lobbyDoc.data();
-
+  
       // Prevent joining if game started or lobby full
       if (data.gameStarted || !data.canJoin) {
         setLobbyError("Game has already started. Cannot join now.");
         return;
       }
-
+  
+      // Check if current user is already in the lobby
+      if (!data.playerB && data.playerCount < 2) {
+        const player = {
+          uid: user.uid,
+          email: user.email,
+          typedText: "",
+          wpm: 0,
+        };
+        await updateDoc(lobbyRef, {
+          playerB: player,
+          canJoin: false,
+          playerCount: 2 // Update player count
+        });
+      }
+  
       if (!data.playerB) {
         const player = {
           uid: user.uid,
@@ -249,7 +273,7 @@ Her full address read: “C-204, Second Floor, Galaxy Apartments, Sector-22, Noi
           canJoin: false, // Close the lobby after Player B joins
         });
       } else {
-        setLobbyError("Lobby is already full.");
+        setLobbyError("Lobby is already full. Only 2 players allowed.");
       }
     } else {
       setLobbyError("Lobby not found. Please check the Lobby ID.");
@@ -576,6 +600,16 @@ Her full address read: “C-204, Second Floor, Galaxy Apartments, Sector-22, Noi
   const sendMessage = async () => {
     const trimmed = newMessage.trim();
     if (!trimmed || !user?.uid || !lobbyId) return;
+    const lobbyRef = doc(db, "lobbies", lobbyId);
+  const lobbyDoc = await getDoc(lobbyRef);
+  
+  if (!lobbyDoc.exists()) return;
+  
+  const lobbyData = lobbyDoc.data();
+  if (lobbyData.playerA.uid !== user.uid && 
+      (!lobbyData.playerB || lobbyData.playerB.uid !== user.uid)) {
+    return; // User is not in this lobby
+  }
     const messagesRef = collection(db, "lobbies", lobbyId, "messages");
     await addDoc(collection(db, "lobbies", lobbyId, "messages"), {
       text: trimmed,
