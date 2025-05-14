@@ -239,15 +239,24 @@ Her full address read: “C-204, Second Floor, Galaxy Apartments, Sector-22, Noi
   
     if (lobbyDoc.exists()) {
       const data = lobbyDoc.data();
+
+       let lobbyData = lobbyDoc.data();
+
   
       // Prevent joining if game started or lobby full
       if (data.gameStarted || !data.canJoin) {
         setLobbyError("Game has already started. Cannot join now.");
         return;
       }
+
+      
+      // Check if user is already in lobby
+      const isPlayerA = lobbyData.playerA?.uid === user.uid;
+      const isPlayerB = lobbyData.playerB?.uid === user.uid;
+
   
       // Check if current user is already in the lobby
-      if (!data.playerB && data.playerCount < 2) {
+      if (!isPlayerA && !isPlayerB && !lobbyData.playerB && lobbyData.playerCount < 2) {
         const player = {
           uid: user.uid,
           email: user.email,
@@ -259,6 +268,28 @@ Her full address read: “C-204, Second Floor, Galaxy Apartments, Sector-22, Noi
           canJoin: false,
           playerCount: 2 // Update player count
         });
+
+      
+  let updated = false;
+  while (!updated) {
+    const snapshot = await getDoc(lobbyRef);
+    const updatedData = snapshot.data();
+    if (updatedData?.playerB?.uid === user.uid) {
+      updated = true;
+      lobbyData = updatedData; // 👈 update our local data too
+    } else {
+      await new Promise(resolve => setTimeout(resolve, 300));
+    }
+  }
+
+  if (
+  lobbyData.playerA?.uid !== user.uid &&
+  lobbyData.playerB?.uid !== user.uid
+) {
+  setLobbyError("You are not authorized to view this lobby");
+  setLobbyId(""); // Reset lobby
+  return;
+}
       }
   
       if (!data.playerB) {
