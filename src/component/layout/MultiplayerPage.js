@@ -102,7 +102,7 @@ const MultiplayerPage = () => {
       .filter((s) => s.trim().length > 0);
 
     // Determine how many sentences to include (between 3-6)
-    const sentenceCount = 3;
+    const sentenceCount = 4;
 
     // Select random sentences
     let selectedSentences = [];
