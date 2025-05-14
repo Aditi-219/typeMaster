@@ -32,44 +32,44 @@ import { MessageCircle, Send, User } from "lucide-react";
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
 const MultiplayerPage = () => {
-const largeSampleText = `
-The quick brown fox jumps over the lazy dog. This sentence contains all the letters in the English alphabet. 
-Programming is the process of creating a set of instructions that tell a computer how to perform a task. 
-React is a JavaScript library for building user interfaces. It is maintained by Facebook and a community of individual developers and companies.
-TypeScript is a strongly typed programming language that builds on JavaScript, giving you better tooling at any scale.
-The best way to learn to code is by actually coding. Practice makes perfect when it comes to programming.
-Algorithms are step-by-step procedures for calculations. Data structures are ways to organize and store data.
-Clean code is code that is easy to understand and easy to change. Always write code as if the person who ends up maintaining it is a violent psychopath who knows where you live.
-The only way to go fast is to go well. Quality is never an accident; it is always the result of intelligent effort.
-JavaScript is the world's most popular programming language. It is the programming language of the Web.
-Computer science is no more about computers than astronomy is about telescopes. It's about solving problems.
-The most disastrous thing that you can ever learn is your first programming language. The second one always seems easier.
-Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.
-There are two ways of constructing a software design: One way is to make it so simple that there are obviously no deficiencies, and the other way is to make it so complicated that there are no obvious deficiencies.
-Measuring programming progress by lines of code is like measuring aircraft building progress by weight.
-The most important property of a program is whether it accomplishes the intention of its user.
-Any fool can write code that a computer can understand. Good programmers write code that humans can understand.
-First, solve the problem. Then, write the code. Programming isn't about what you know; it's about what you can figure out.
-Sometimes it pays to stay in bed on Monday, rather than spending the rest of the week debugging Monday's code.
-The best thing about a boolean is even if you are wrong, you are only off by a bit.
-If debugging is the process of removing software bugs, then programming must be the process of putting them in.
-It's not a bug - it's an undocumented feature. The computer was born to solve problems that did not exist before.
-On January 1st, 2024, at exactly 06:45:00 AM, a new user named megha_singh07 registered on the system using the email megha.singh07@gmail.com and set her password to Secure#Pass1234. 
-Her contact number was entered as +91-98765-12345, and her backup contact was listed as +91-99888-77665. 
-Her full address read: “C-204, Second Floor, Galaxy Apartments, Sector-22, Noida, U.P. – 201301.”
- She provided her PAN number as BNZPS1234K and her Aadhaar number as 2345-6789-1011. 
- The system assigned her a unique Customer ID: CUS-0001273-IN and logged the signup request in the backend log file user_reg_2024-01-01.log.
- The registration form had 8 fields: name, email, password, phone, backup phone, address, PAN, and Aadhaar.
- All were validated using regex patterns like ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-z]{2,}$ for email, and ^[A-Z]{5}[0-9]{4}[A-Z]{1}$ for PAN. 
- After validation, a welcome email was triggered via SMTP at 06:45:33 AM, with the subject line: “Welcome to SafeStore, Megha!” and from-address: support@safestore.in.
- At 07:00:12 AM, Megha logged in for the first time. The login API /api/v1/auth/login was hit with headers like Content-Type: application/json, and the payload { "email": "megha.singh07@gmail.com", "password": "Secure#Pass1234" }.
- On successful login, the system generated a JWT token starting with eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9... and set the token as an HttpOnly cookie with expiry: 2024-02-01T07:00:12Z. Her session ID was logged as SID-8845129072@!.
- By 08:12:59 AM, Megha had browsed 14 different products. Product IDs included PROD-2024-001, PROD-2024-002, all the way to PROD-2024-014. 
- She added 3 items to her cart: a “Logitech MX Master 3S” priced at ₹7,499.00, an “HP M24f Monitor” priced at ₹11,799.50, and a “boAt Rockerz 255 Pro+” at ₹1,999.00. 
- The cart total was ₹21,297.50, plus a GST of ₹3,833.55, totaling ₹25,131.05. 
-  At checkout, her billing address was auto-filled using the previously stored info, and the payment mode chosen was “Credit Card – Visa ending in 1234”.
-`;
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const largeSampleText = `
+  The quick brown fox jumps over the lazy dog This sentence contains all the letters in the English alphabet 
+  Programming is the process of creating a set of instructions that tell a computer how to perform a task 
+  React is a JavaScript library for building user interfaces It is maintained by Facebook and a community of individual developers and companies
+  TypeScript is a strongly typed programming language that builds on JavaScript giving you better tooling at any scale
+  The best way to learn to code is by actually coding Practice makes perfect when it comes to programming
+  Algorithms are stepbystep procedures for calculations Data structures are ways to organize and store data
+  Clean code is code that is easy to understand and easy to change Always write code as if the person who ends up maintaining it is a violent psychopath who knows where you live
+  The only way to go fast is to go well Quality is never an accident it is always the result of intelligent effort
+  JavaScript is the worlds most popular programming language It is the programming language of the Web
+  Computer science is no more about computers than astronomy is about telescopes Its about solving problems
+  The most disastrous thing that you can ever learn is your first programming language The second one always seems easier
+  Debugging is twice as hard as writing the code in the first place Therefore if you write the code as cleverly as possible you are by definition not smart enough to debug it
+  There are two ways of constructing a software design One way is to make it so simple that there are obviously no deficiencies and the other way is to make it so complicated that there are no obvious deficiencies
+  Measuring programming progress by lines of code is like measuring aircraft building progress by weight
+  The most important property of a program is whether it accomplishes the intention of its user
+  Any fool can write code that a computer can understand Good programmers write code that humans can understand
+  First solve the problem Then write the code Programming isnt about what you know its about what you can figure out
+  Sometimes it pays to stay in bed on Monday rather than spending the rest of the week debugging Mondays code
+  The best thing about a boolean is even if you are wrong you are only off by a bit
+  If debugging is the process of removing software bugs then programming must be the process of putting them in
+  Its not a bug  its an undocumented feature The computer was born to solve problems that did not exist before
+  On January 1st 2024 at exactly 064500 AM a new user named megha singh07 registered on the system using the email megha singh07gmailcom and set her password to SecurePass1234 
+  Her contact number was entered as 919876512345 and her backup contact was listed as 919988877665 
+  Her full address read C204 Second Floor Galaxy Apartments Sector22 Noida UP 201301 
+  She provided her PAN number as BNZPS1234K and her Aadhaar number as 234567891011 
+  The system assigned her a unique Customer ID CUS0001273IN and logged the signup request in the backend log file user reg 20240101log
+  The registration form had 8 fields name email password phone backup phone address PAN and Aadhaar
+  All were validated using regex patterns like a zA Z0 9 for email and A Z5 0 9 4 A Z1 for PAN 
+  After validation a welcome email was triggered via SMTP at 064533 AM with the subject line Welcome to SafeStore Megha and fromaddress supportsafestorein
+  At 070012 AM Megha logged in for the first time The login API apiv1authlogin was hit with headers like ContentType applicationjson and the payload  email megha singh07gmailcom password SecurePass1234 
+  On successful login the system generated a JWT token starting with eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVC9 and set the token as an HttpOnly cookie with expiry 20240201T070012Z Her session ID was logged as SID8845129072 
+  By 081259 AM Megha had browsed 14 different products Product IDs included PROD2024001 PROD2024002 all the way to PROD2024014 
+  She added 3 items to her cart a Logitech MX Master 3S priced at 749900 an HP M24f Monitor priced at 1179950 and a boAt Rockerz 255 Pro priced at 199900 
+  The cart total was 2129750 plus a GST of 383355 totaling 2513105 
+  At checkout her billing address was autofilled using the previously stored info and the payment mode chosen was Credit Card  Visa ending in 1234
+  `;
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
   const [lobbyId, setLobbyId] = useState("");
   const [playerA, setPlayerA] = useState(null);
@@ -435,6 +435,7 @@ Her full address read: “C-204, Second Floor, Galaxy Apartments, Sector-22, Noi
     const key = e.key;
 
     let newTypedText = typedTextA;
+    console.log("Key:", key);
 
     if (key.length === 1 && key.match(/^[a-zA-Z0-9 .,!?'"-]$/)) {
       newTypedText += key;
@@ -457,6 +458,7 @@ Her full address read: “C-204, Second Floor, Galaxy Apartments, Sector-22, Noi
 
     e.preventDefault();
     const key = e.key;
+    console.log("Key:", key);
 
     let newTypedText = typedTextB;
 
