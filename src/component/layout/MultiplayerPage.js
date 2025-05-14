@@ -164,56 +164,71 @@ Her full address read: “C-204, Second Floor, Galaxy Apartments, Sector-22, Noi
     }
   }, [gameStarted, playerA, playerB, user]);
 
+
   useEffect(() => {
     if (!lobbyId) return;
   
-    const unsubscribe = onSnapshot(doc(db, "lobbies", lobbyId), (doc) => {
-      if (doc.exists()) {
-        const data = doc.data();
+    let unsubscribe = null;
+  
+    const checkAndSubscribe = async (attempt = 1) => {
+      const lobbyRef = doc(db, "lobbies", lobbyId);
+      const lobbySnap = await getDoc(lobbyRef);
+  
+      if (lobbySnap.exists()) {
+        const data = lobbySnap.data();
   
         const isPlayer =
           data.playerA?.uid === user?.uid || data.playerB?.uid === user?.uid;
   
         if (!isPlayer) {
-          setLobbyError("wait while..");
-          setLobbyId(""); // Reset lobby
-  
-          // 🔁 Retry after a short delay
-          setTimeout(() => {
-            setLobbyId(lobbyId); // Try joining again
-          }, 1000); // retry after 2 seconds
-  
+          if (attempt === 1) {
+            setTimeout(() => checkAndSubscribe(2), 0);
+          } else {
+            setLobbyError("Cannot join. Lobby is full.");
+            setLobbyId("");
+          }
           return;
         }
   
-        setText(data.text);
-        setPlayerA(data.playerA);
-        setPlayerB(data.playerB);
-        setGameStarted(data.gameStarted);
-        setCountdown(data.countdown);
-        setGameEnded(data.gameEnded);
+        unsubscribe = onSnapshot(lobbyRef, (doc) => {
+          if (doc.exists()) {
+            const liveData = doc.data();
   
-        if (data.playerA?.uid === user?.uid) {
-          setTypedTextA(data.playerA?.typedText || "");
-        }
-        if (data.playerB?.uid === user?.uid) {
-          setTypedTextB(data.playerB?.typedText || "");
-        }
+            setText(liveData.text);
+            setPlayerA(liveData.playerA);
+            setPlayerB(liveData.playerB);
+            setGameStarted(liveData.gameStarted);
+            setCountdown(liveData.countdown);
+            setGameEnded(liveData.gameEnded);
   
-        setLobbyError(null);
-        setIsLobbyValid(true);
+            if (liveData.playerA?.uid === user?.uid) {
+              setTypedTextA(liveData.playerA?.typedText || "");
+            }
+            if (liveData.playerB?.uid === user?.uid) {
+              setTypedTextB(liveData.playerB?.typedText || "");
+            }
+  
+            setLobbyError(null);
+            setIsLobbyValid(true);
+          } else {
+            setLobbyError("Lobby not found. Please check the Lobby ID.");
+            setIsLobbyValid(false);
+          }
+        });
       } else {
-        setLobbyError("Lobby not found. Please check the Lobby ID.");
-        setPlayerA(null);
-        setPlayerB(null);
-        setGameStarted(false);
-        setCountdown(0);
-        setIsLobbyValid(false);
+        setLobbyError("Lobby not found.");
+        setLobbyId("");
       }
-    });
+    };
   
-    return () => unsubscribe();
+    checkAndSubscribe();
+  
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
   }, [lobbyId, user?.uid]);
+  
+    
   
 
   // Handle the Create Lobby Button
