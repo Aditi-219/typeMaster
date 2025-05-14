@@ -95,26 +95,27 @@ At checkout her billing address was autofilled using the previously stored info 
 
   // Sample text for typing
   const sampleText = "The quick brown fox jumped over the lazy dog.";
+
   const getRandomTextSegment = () => {
-    // Split the large text into sentences
-    const sentences = largeSampleText
-      .split(". ")
-      .filter((s) => s.trim().length > 0);
-
-    // Determine how many sentences to include (between 3-6)
-    const sentenceCount = 4;
-
-    // Select random sentences
-    let selectedSentences = [];
-    for (let i = 0; i < sentenceCount; i++) {
-      const randomIndex = Math.floor(Math.random() * sentences.length);
-      selectedSentences.push(
-        sentences[randomIndex] + (i < sentenceCount - 1 ? ". " : ".")
-      );
-    }
-
-    return selectedSentences.join("");
+    // Split the large text into words
+    const words = largeSampleText.split(/\s+/).filter(word => word.length > 0);
+    
+    // Determine how many words to include (you can make this random if you want)
+    const wordCount = 80; // For example, get 50 words
+    
+    // Ensure we don't try to get more words than exist in the text
+    const maxStartIndex = Math.max(0, words.length - wordCount);
+    
+    // Select a random starting point
+    const startIndex = Math.floor(Math.random() * maxStartIndex);
+    
+    // Get the contiguous block of words
+    const selectedWords = words.slice(startIndex, startIndex + wordCount);
+    
+    // Join them back into a string
+    return selectedWords.join(" ");
   };
+
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
