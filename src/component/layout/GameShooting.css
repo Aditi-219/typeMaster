@@ -6,7 +6,7 @@
   padding: 0;
 }
 
-body {
+.game-container {
   font-family: 'Rajdhani', sans-serif;
   color: #e6f1ff;
   overflow: auto;

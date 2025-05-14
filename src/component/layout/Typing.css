@@ -156,7 +156,7 @@ html, body {
 }
 .timer-options, .word-options {
   display: flex; 
-  /* gap: 10px;  */
+  gap: 10px;
 }
 
 .options {
@@ -187,7 +187,7 @@ html, body {
 .word-options{
   background: #151410; 
   border-radius: 10px;
-  width: 22%;
+  width: 25%;
   padding: 5rem;
   margin-top: 23px;
   padding-top: 5px;
