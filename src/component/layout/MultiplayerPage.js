@@ -132,19 +132,19 @@ const MultiplayerPage = () => {
   }, [lobbyId]);
 
   // Add this to your existing useEffect
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     const container =
-  //       playerA?.uid === user?.uid
-  //         ? typingContainerARef.current
-  //         : typingContainerBRef.current;
-  //     if (container && document.activeElement !== container) {
-  //       container.focus();
-  //     }
-  //   }, 50);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const container =
+        playerA?.uid === user?.uid
+          ? typingContainerARef.current
+          : typingContainerBRef.current;
+      if (container && document.activeElement !== container) {
+        container.focus();
+      }
+    }, 50);
 
-  //   return () => clearInterval(interval);
-  // }, [playerA, playerB, user]);
+    return () => clearInterval(interval);
+  }, [playerA, playerB, user]);
   useEffect(() => {
     if (gameStarted) {
       // Use requestAnimationFrame for better timing
